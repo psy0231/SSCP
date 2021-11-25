@@ -642,109 +642,349 @@ the message after "S:" stands for server's response):
 
 # 6. The Built-in Command Line Protocol
 > Keywords: Command Line, Protocol, StringRequestInfo, Text Encoding
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## What's the Protocol?
+What's the Protocol? Lots of people probably will answer "TCP" or "UDP". But to build a network application, only TCP or UDP is not enough. TCP and UDP are transport-layer protocols. It's far from enough to enable talking between two endpoints in the network if you only define transport-layer protocol. You need to define your application level protocol to convert your received binary data to the requests which your application can understand.
+
+## The Built-in Command Line Protocol
+- The command line protocol is a widely used protocols, lots of protocols like Telnet, SMTP, POP3 and FTP protocols are base on command line protocol etc. If you do not have a custom protocol, then SuperSocket will use command line protocol by default, which can simplify the development of this kind of protocols.
+
+- The command line protocol defines each request must be ended with a carriage return "\r\n".
+
+- If you use the command line protocol in SuperSocket, all requests will to translated into StringRequestInfo instances.
+
+- StringRequestInfo is defined like this:
+	```c#
+	public class StringRequestInfo
+	{
+			public string Key { get; }
+
+			public string Body { get; }
+
+			public string[] Parameters { get; }
+
+			/*
+			Other properties and methods
+			*/
+	}
+	```
+
+- Because the built-in command line protocol in SuperSocket uses a space to split request key and parameters, So when the client sends the data below to the server:
+	```
+	"LOGIN kerry 123456" + NewLine
+	```
+- the SuperSocket server will receive a StringRequestInfo instance, the properties of the request info instance will be:
+	```
+	Key: "LOGIN"
+	Body: "kerry 123456";
+	Parameters: ["kerry", "123456"]
+	```
+
+- If you have defined a Command with name "LOGIN", the command's ExecuteCommand method will be excuted with the StringRequestInfo instance as parameter:
+	```c#
+	public class LOGIN : CommandBase<AppSession, StringRequestInfo>
+	{
+			public override void ExecuteCommand(AppSession session, StringRequestInfo requestInfo)
+			{
+					//Implement your business logic
+			}
+	}
+	```
+
+## Customize the Command Line Protocol
+- Some users might have different request format, for instance:
+	```
+	"LOGIN:kerry,12345" + NewLine
+	```
+
+- The request's key is separated with body by the char ':', and the parameters are separated by the char ','. This kind of request can be supported easily, just extend the command line protocol like the below code:
+	```c#
+	public class YourServer : AppServer<YourSession>
+	{
+			public YourServer()
+					: base(new CommandLineReceiveFilterFactory(Encoding.Default, new BasicRequestInfoParser(":", ",")))
+			{
+
+			}
+	}
+	```
+
+- If you want to customize the request format much deeper, you can implement a RequestInfoParser class base the interface IRequestInfoParser, and then pass in your own RequestInfoParser instance when instantiate the CommandLineReceiveFilterFactory instance:
+	```c#
+	public class YourServer : AppServer<YourSession>
+	{
+			public YourServer()
+					: base(new CommandLineReceiveFilterFactory(Encoding.Default, new YourRequestInfoParser()))
+			{
+
+			}
+	}
+	```
+
+## Text Encoding
+- The default encoding of the command line protocol is Ascii, but you can change it in the configuration by setting the "textEncoding" attribute of the server node:
+	```xml
+	<server name="TelnetServer"
+				textEncoding="UTF-8"
+				serverType="YourAppServer, YourAssembly"
+				ip="Any" port="2020">
+	</server>
+	```
 
 # 7. The Built-in Common Format Protocol Implementation Templates
+> Keywords: Protocol Tools, Custom Protocol, TerminatorReceiveFilter, CountSpliterReceiveFilter, FixedSizeReceiveFilter, BeginEndMarkReceiveFilter, FixedHeaderReceiveFilter
+
+- After reading the previous document, you probably find implementing your own protocol using SuperSocket is not easy for you. To make this job easier, SuperSocket provides some common protocol tools, which you can use to build your own protocol easily and fast:
+
+	- TerminatorReceiveFilter (SuperSocket.SocketBase.Protocol.TerminatorReceiveFilter, SuperSocket.SocketBase)
+	- CountSpliterReceiveFilter (SuperSocket.Facility.Protocol.CountSpliterReceiveFilter, SuperSocket.Facility)
+	- FixedSizeReceiveFilter (SuperSocket.Facility.Protocol.FixedSizeReceiveFilter, SuperSocket.Facility)
+	- BeginEndMarkReceiveFilter (SuperSocket.Facility.Protocol.BeginEndMarkReceiveFilter, SuperSocket.Facility)
+	- FixedHeaderReceiveFilter (SuperSocket.Facility.Protocol.FixedHeaderReceiveFilter, SuperSocket.Facility)
+
+## TerminatorReceiveFilter - Terminator Protocol
+- Similar with command line protocol, some protocols use a terminator to identify a request. For example, one protocol uses two chars "##" as terminator, then you can use the class "TerminatorReceiveFilterFactory":
+	```c#
+	/// <summary>
+	/// TerminatorProtocolServer
+	/// Each request end with the terminator "##"
+	/// ECHO Your message##
+	/// </summary>
+	public class TerminatorProtocolServer : AppServer
+	{
+			public TerminatorProtocolServer()
+					: base(new TerminatorReceiveFilterFactory("##"))
+			{
+
+			}
+	}
+
+	```
+
+- The default RequestInfo is StringRequestInfo, you also can create your own RequestInfo class, but it requires a bit more work:
+
+- Implement your ReceiveFilter base on TerminatorReceiveFilter:
+	```c#
+	public class YourReceiveFilter : TerminatorReceiveFilter<YourRequestInfo>
+	{
+			//More code
+	}
+	```
+
+- Implement your ReceiveFilterFactory which can create your request filter instances:
+	```c#
+	public class YourReceiveFilterFactory : IReceiveFilterFactory<YourRequestInfo>
+	{
+			//More code
+	}
+	```
+- And then use the request filter factory in your AppServer.
+
+## CountSpliterReceiveFilter - Fixed Number Split Parts with Separator Protocol
+- Some protocols defines their requests look like in the format of "#part1#part2#part3#part4#part5#part6#part7#". There are 7 parts in one request and all parts are separated by char '#'. This kind protocol's implementing also is quite easy:
+	```c#
+	/// <summary>
+	/// Your protocol likes like the format below:
+	/// #part1#part2#part3#part4#part5#part6#part7#
+	/// </summary>
+	public class CountSpliterAppServer : AppServer
+	{
+			public CountSpliterAppServer()
+					: base(new CountSpliterReceiveFilterFactory((byte)'#', 8)) // 7 parts but 8 separators
+			{
+
+			}
+	}
+	```
+
+- You also can customize your protocol deeper using the classes below:
+	```
+	CountSpliterReceiveFilter<TRequestInfo>
+	CountSpliterReceiveFilterFactory<TReceiveFilter>
+	CountSpliterReceiveFilterFactory<TReceiveFilter, TRequestInfo>
+
+	```
+## FixedSizeReceiveFilter - Fixed Size Request Protocol
+- In this kind protocol, the size of all requests are same. If your each request is 9 characters string like "KILL BILL", what you should do is implementing a ReceiveFilter like the code below:
+	```c#
+	class MyReceiveFilter : FixedSizeReceiveFilter<StringRequestInfo>
+	{
+			public MyReceiveFilter()
+					: base(9) //pass in the fixed request size
+			{
+
+			}
+
+			protected override StringRequestInfo ProcessMatchedRequest(byte[] buffer, int offset, int length, bool toBeCopied)
+			{
+					//TODO: construct the request info instance from the parsed data and then return
+			}
+	}
+	```
+
+- Then use the receive filter in your AppServer class:
+	```c#
+	public class MyAppServer : AppServer
+	{
+			public MyAppServer()
+					: base(new DefaultReceiveFilterFactory<MyReceiveFilter, StringRequestInfo>()) //using default receive filter factory
+			{
+
+			}
+	}
+	```
+
+## BeginEndMarkReceiveFilter - The Protocol with Begin and End Mark
+- Every message in this protocol have fixed begin mark and end mark. For example, I have a protocol all messages are in the format "!xxxxxxxxxxxxxx$". In this case "!" is begin mark and the "$" is end mark, so my receive filter looks like:
+	```c#
+	class MyReceiveFilter : BeginEndMarkReceiveFilter<StringRequestInfo>
+	{
+		//Both begin mark and end mark can be two or more bytes
+		private readonly static byte[] BeginMark = new byte[] { (byte)'!' };
+		private readonly static byte[] EndMark = new byte[] { (byte)'$' };
+
+		public MyReceiveFilter()
+				: base(BeginMark, EndMark) //pass in the begin mark and end mark
+		{
+
+		}
+
+		protected override StringRequestInfo ProcessMatchedRequest(byte[] readBuffer, int offset, int length)
+		{
+				//TODO: construct the request info instance from the parsed data and then return
+		}
+	}
+	```
+	
+- Then use the receive filter in your AppServer class:
+	```c#
+	public class MyAppServer : AppServer
+	{
+		public MyAppServer()
+				: base(new DefaultReceiveFilterFactory<MyReceiveFilter, StringRequestInfo>()) //using default receive filter factory
+		{
+
+		}
+	}
+	```
+
+## FixedHeaderReceiveFilter - Fixed Header with Body Length Protocol
+- This kind protocol defines each request has two parts, the first part contains some basic information of this request include the length of the second part. We usually call the first part is header and the second part is body.
+
+- For example, we have a protocol like that: the header contains 6 bytes, the first 4 bytes represent the request's name, the last 2 bytes represent the length of the body:
+
+		/// +-------+---+-------------------------------+
+		/// |request| l |                               |
+		/// | name  | e |    request body               |
+		/// |  (4)  | n |                               |
+		/// |       |(2)|                               |
+		/// +-------+---+-------------------------------+
+
+- Using SuperSocket, you can implement this kind protocol easily:
+	```c#
+	class MyReceiveFilter : FixedHeaderReceiveFilter<BinaryRequestInfo>
+	{
+		public MyReceiveFilter()
+				: base(6)
+		{
+
+		}
+
+		protected override int GetBodyLengthFromHeader(byte[] header, int offset, int length)
+		{
+				return (int)header[offset + 4] * 256 + (int)header[offset + 5];
+		}
+
+		protected override BinaryRequestInfo ResolveRequestInfo(ArraySegment<byte> header, byte[] bodyBuffer, int offset, int length)
+		{
+				return new BinaryRequestInfo(Encoding.UTF8.GetString(header.Array, header.Offset, 4), bodyBuffer.CloneRange(offset, length));
+		}
+	}
+	```
+
+- You need to implement your own request filter base on FixedHeaderReceiveFilter.
+	- The number 6 passed into the parent class's constructor means the size of the request header;
+	- The method "GetBodyLengthFromHeader(...)" you should override returns the length of the body according the received header;
+	- the method "ResolveRequestInfo(....)" you should override returns the RequestInfo instance according the received header and body.
+- Then you can build a receive filter factory or use the default receive factory to use this receive filter in SuperSocket.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 8. Implement Your Own Communication Protocol with IRequestInfo, IReceiveFilter and etc
 # 9. Command and Command Loader
 # 10. Get the Connected Event and Closed Event of a Connection
