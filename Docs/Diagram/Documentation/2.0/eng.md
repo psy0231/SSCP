@@ -637,3 +637,553 @@ hostBuilder.UseCommand((commandOptions) =>
 		}
 	}
 	```
+
+# 7. Extend Your AppSession and SuperSocketService
+> Keywords: SuperSocketService, AppSession
+
+## What is AppSession?
+- AppSession represents a logic socket connection, connection based operations should be defined in this class. You can use the instance of this class to send data to clients, receive data from connection or close the connection.
+
+## What is SuperSocketService?
+- SuperSocketService stands for the service instance which listens all client connections, hosts all connections. Application level operations and logics can be defined in it.
+
+## Extend your AppSession
+1. You can override base AppSession's operations
+	```c#
+	public class TelnetSession : AppSession
+	{
+		protected override async ValueTask OnSessionConnectedAsync()
+		{
+			// do something right after the sesssion is connected
+		}            
+
+		protected override async ValueTask OnSessionClosedAsync(EventArgs e)
+		{
+			// do something right after the sesssion is closed
+		}
+	}
+	```
+
+- You also can add new properties for your session according your business requirement Let me create a AppSession which would be used in a game server:
+	```c#
+	public class PlayerSession ：AppSession
+	{
+		public int GameHallId { get; internal set; }
+
+		public int RoomId { get; internal set; }
+	}
+	```
+
+3. Adopt your own AppSession class in your SuperSocket service Register the application session type through builder:
+	```c#
+	builder.UseSession<MySession>();
+	```
+
+## Create your own SuperSocket service
+1. Extend the SuperSocketService and override the methods if you want
+	```c#
+	public class GameService<TReceivePackageInfo> : SuperSocketService<TReceivePackageInfo>
+			where TReceivePackageInfo : class
+	{
+		public GameService(IServiceProvider serviceProvider, IOptions<ServerOptions> serverOptions)
+				: base(serviceProvider, serverOptions)
+		{
+
+		}
+
+		protected override async ValueTask OnSessionConnectedAsync(IAppSession session)
+		{
+			// do something right after the sesssion is connected
+			await base.OnSessionConnectedAsync(session);
+		}
+
+		protected override async ValueTask OnSessionClosedAsync(IAppSession session)
+		{
+			// do something right after the sesssion is closed
+			await base.OnSessionClosedAsync(session);
+		}
+
+		protected override async ValueTask OnStartedAsync()
+		{
+			// do something right after the service is started
+		}
+
+		protected override async ValueTask OnStopAsync()
+		{
+			// do something right after the service is stopped
+		}
+	}
+	```
+
+2. Start to use your own service type Register the service type through builder:
+	```c#
+	builder.UseHostedService<GameService<TReceivePackageInfo>>();
+	```
+
+# 8. Get the Connected Event and Closed Event of a Connection
+> Keywords: Connection, Session, Connected Event, Closed Event
+
+## Register session open/close handlers by the method ConfigureSessionHandler of the host builder
+```c#
+builder.UseSessionHandler((s) =>
+    {
+        // things to do when the session just connects
+    },
+    (s, e) =>
+    {
+        // s: the session
+        // e: the CloseEventArgs
+        // e.Reason: the close reason
+        // things to do after the session closes
+    });
+```
+
+## Handle the session events by extending the application session
+- Define your own application session type and handle the session events in the override methods:
+	```c#
+	public class MyAppSession : AppSession
+	{
+		protected override ValueTask OnSessionConnectedAsync()
+		{
+				// the logic after the session gets connected
+		}
+
+		protected override ValueTask OnSessionClosedAsync(CloseEventArgs e)
+		{
+				// the logic after the session gets closed
+		}
+	}
+	```
+
+- Enable your own application session with the host builder:
+	```c#
+	hostBuiler.UseSession<MyAppSession>();
+	```
+
+## Handle the session events by extending the SuperSocketService
+- Define your own SuperSocket service type and override the session event handling methods:
+	```c#
+	public class GameService<TReceivePackageInfo> : SuperSocketService<TReceivePackageInfo>
+			where TReceivePackageInfo : class
+	{
+		protected override ValueTask OnSessionConnectedAsync(IAppSession session)
+		{
+				// do something right after the sesssion gets connected
+		}
+
+		protected override ValueTask OnSessionClosedAsync(IAppSession session, CloseEventArgs e)
+		{
+				// do something right after the sesssion gets closed
+		}
+	}
+	```
+
+- Use your own SuperSocket service type when you create the host:
+	```c#
+	builder.UseHostedService<GameService<StringPackageInfo>>();
+	```
+
+# 9. WebSocket Server
+> Keywords: WebSocket
+
+## Create a WebSocket Server
+- At first, you should reference the package SuperSocket.WebSocket.Server
+	```
+	dotnet add package SuperSocket.WebSocket.Server --version 2.0.0-*
+	```
+
+- Then add the using statement
+	```c#
+	using SuperSocket.WebSocket.Server;
+	```
+
+- Let's create the WebSocket server. This server just echo messages back to the client
+	```c#
+	var host = WebSocketHostBuilder.Create()
+			.UseWebSocketMessageHandler(
+					async (session, message) =>
+					{
+							await session.SendAsync(message.Message);
+					}
+			)
+			.ConfigureAppConfiguration((hostCtx, configApp) =>
+			{
+					configApp.AddInMemoryCollection(new Dictionary<string, string>
+					{
+							{ "serverOptions:name", "TestServer" },
+							{ "serverOptions:listeners:0:ip", "Any" },
+							{ "serverOptions:listeners:0:port", "4040" }
+					});
+			})
+			.ConfigureLogging((hostCtx, loggingBuilder) =>
+			{
+					loggingBuilder.AddConsole();
+			})
+			.Build();
+
+	await host.RunAsync();
+	```
+
+## Define commands to handle messages
+- Define at least one command
+	```c#
+	class ADD : IAsyncCommand<WebSocketSession, StringPackageInfo>
+	{
+		public async ValueTask ExecuteAsync(WebSocketSession session, StringPackageInfo package)
+		{
+			var result = package.Parameters
+					.Select(p => int.Parse(p))
+					.Sum();
+
+			await session.SendAsync(result.ToString());
+		}
+	}
+	```
+
+- Register the command
+	```c#
+	builder
+		.UseCommand<StringPackageInfo, StringPackageConverter>(commandOptions =>
+		{
+			// register commands one by one
+			commandOptions.AddCommand<ADD>();
+		});
+	```
+
+- The type parameter StringPackageConverter is the type which can convert WebSocketPackage to your application package.
+	```c#
+	class StringPackageConverter : IPackageMapper<WebSocketPackage, StringPackageInfo>
+	{
+		public StringPackageInfo Map(WebSocketPackage package)
+		{
+			var pack = new StringPackageInfo();
+			var arr = package.Message.Split(' ', 3, StringSplitOptions.RemoveEmptyEntries);
+			pack.Key = arr[0];
+			pack.Parameters = arr.Skip(1).ToArray();
+			return pack;
+		}
+	}
+	```
+
+# 10. Multiple Listeners
+- Keywords: Multiple Listeners, Multiple Port, Multiple Endpoints, Multiple Listeners Configuration, IP, Port
+
+## Single listener
+- In the configuration below, you can configure the server instance's listening IP and port:
+	```json
+	{
+		"serverOptions": {
+			"name": "EchoServer",
+			"listeners": [
+				{
+					"ip": "Any",
+					"port": "2020"
+				}
+			]
+		}
+	}
+	```
+
+## Multiple listeners
+- You also can add more than one element under the configuration node "listeners":
+	```json
+	{
+		"serverOptions": {
+			"name": "EchoServer",
+			"listeners": [
+				{
+					"ip": "Any",
+					"port": "2020"
+				},
+				{
+					"ip": "192.168.3.1",
+					"port": "2020"
+				}
+			]
+		}
+	}
+	```
+
+- In this case, the server instance "EchoServer" will listen two local endpoints. It is very similar with that a website can have multiple bindings in IIS.
+
+- You also can set different options for the different listeners:
+	```json
+	{
+		"serverOptions": {
+			"name": "EchoServer",
+			"listeners": [
+				{
+					"ip": "Any",
+					"port": 80
+				},
+				{
+					"ip": "Any",
+					"port": 443,
+					"security": "Tls12",
+					"certificateOptions": {
+						"filePath": "supersocket.pfx",
+						"password": "supersocket"
+					}
+				}
+			]
+		}
+	}
+	```
+
+- In addition to define listeners in configuration, SuperSocket 2.0 also allow you to add listener programmatically:
+	```c#
+	var host = SuperSocketHostBuilder.Create<TextPackageInfo, LinePipelineFilter>(args)
+			.ConfigureSuperSocket(options =>
+			{
+					options.AddListener(new ListenOptions
+							{
+									Ip = "Any",
+									Port = 4040
+							}
+					);
+			}).Build();
+
+	await host.RunAsync();
+	```
+
+# 11. Multiple Server Instances
+> Keywords: Multiple Server Instances, Multiple Server Configuration, Server Dispatch, Isolation
+
+## SuperSocket support running multiple server instances in the same process
+ - A generic host (.NET Core) can run multiple SuperSocket servver instances. Each of them is a HostedService within the host.
+
+- You can leave the options of the multiple servers under the node "serverOptions" in the configuration:
+	```json
+	{
+		"serverOptions": {
+			"TestServer1": {
+				"name": "TestServer1",
+				"listeners": [
+					{
+						"ip": "Any",
+						"port": 4040
+					}
+				]
+			},
+			"TestServer2": {
+				"name": "TestServer2",
+				"listeners": [                
+					{
+						"ip": "Any",
+						"port": 4041
+					}
+				]
+			}
+		}
+	}
+	```
+
+- And then you should tell which server configuration node each server should load. The "serverName1" and "serverName2" are the two servers' names which are defined in the configuration as the keys of two children of the node "serverOptions". SuperSocketServiceA and SuperSocketServiceB are the service types of these two server and they are not allowed to be the same type.
+	```c#
+	var hostBuilder = MultipleServerHostBuilder.Create()
+		.AddServer<SuperSocketServiceA, TextPackageInfo, LinePipelineFilter>(builder =>
+		{
+			builder
+			.ConfigureServerOptions((ctx, config) =>
+			{
+					return config.GetSection("serverName1");
+			});
+		})
+		.AddServer<SuperSocketServiceB, TextPackageInfo, LinePipelineFilter>(builder =>
+		{
+			builder
+			.ConfigureServerOptions((ctx, config) =>
+			{
+					return config.GetSection("serverName2");
+			});
+		})
+	```
+## Isolation of the server instances
+- Different with the previous version of SuperSocket, multiple servers run as hosted service within one generic host. So they run in the same host and same process. If you want to run them in different processes or different servers, we recommend you to use Docker or other container technology.
+
+# 12. Enable Transport Layer Security in SuperSocket
+> Keywords: TLS, SSL, Certificate, X509 Certificate, Local Certificate Store
+
+## SuperSocket supports the Transport Layer Security (TLS)
+- SuperSocket has built-in support for TLS. You don't need make any change for your code to let your socket server support TLS.
+
+## To enable TLS for your SuperSocket server, you should have a certificate in advance.
+- There are two ways to provide the certificate:
+	1. a X509 certificate file with private key (*.pfx)
+		- for testing purpose you can generate a certificate file by this open source CertificateCreator(https://github.com/kerryjiang/CertificateCreator)
+		- in production environment, you should purchase a certificate from a certificate authority
+	2. a certificate in local certificate store
+
+## Enable TLS with a certificate file
+- You should update your configuration to use the certificate file following the below steps:
+	1. set security attribute for the listener; This attribute is for the TLS protocols what the listener will support; The appilicable values include "Tls11", "Tls12", "Tls13" and so on; Multiple values should be seperated by comma, like "Tls11,Tls12,Tls13";
+	2. add the certificate option node under the listener node;
+
+- The configuration should look like:
+	```json
+	{
+		"serverOptions": {
+			"name": "TestServer",
+			"listeners": [
+				{
+					"ip": "Any",
+					"port": 4040,
+					"security": "Tls12",
+					"certificateOptions": {
+						"filePath": "supersocket.pfx",
+						"password": "supersocket"
+					}
+				}
+			]
+		}
+	}
+	```
+	- Note: the password in the certificate options is the private key of the certificate file.
+
+- There is one more option named "keyStorageFlags" for certificate loading:
+	```json
+	"certificateOptions": {
+			"filePath": "supersocket.pfx",
+			"password": "supersocket",
+			"keyStorageFlags": "UserKeySet"
+	}
+	```
+
+- You can read the MSDN article below for more information about this option: http://msdn.microsoft.com/zh-cn/library/system.security.cryptography.x509certificates.x509keystorageflags(v=vs.110).aspx
+
+## Enable TLS with a certificate in your local certificate store
+- You also can use a certificate in your local certificate store instead of a physical certificate file. The thumbprint of the certificate you want to use is required. If the storeName is not specified, the system will search the certificate from the "Root" store:
+	```json
+	"certificateOptions": {
+		"storeName": "My",
+		"thumbprint": "f42585bceed2cb049ef4a3c6d0ad572a6699f6f3"
+	}
+	```
+
+- Other optional options:
+	- storeLocation - CurrentUser, LocalMachine
+		```json
+		"certificateOptions": {
+				"storeName": "My",
+				"thumbprint": "‎f42585bceed2cb049ef4a3c6d0ad572a6699f6f3",
+				"storeLocation": "LocalMachine"
+		}
+		```
+
+## Client certificate validation
+- In TLS communications, the client side certificate is not a must, but some systems require much higher security guarantee. This feature allow you to validate the client side certificate from the server side.
+
+- At first, to enable the client certificate validation, you should add the attribute "clientCertificateRequired" in the certificate options node of the listener:
+	```json
+	"certificateOptions": {
+			"filePath": "supersocket.pfx",
+			"password": "supersocket",
+			"clientCertificateRequired": true
+	}
+	```
+
+- And then you should define you client certificate validation logic with the RemoteCertificateValidationCallback in the certificate options when you configure the server options:
+	```c#
+	var host = SuperSocketHostBuilder.Create<TextPackageInfo, LinePipelineFilter>(args)
+			.ConfigureSuperSocket(options =>
+			{
+				foreach (var certOptions in options.Listeners.Where(l => l.CertificateOptions != null && l.CertificateOptions.ClientCertificateRequired))
+				{
+					certOptions.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+				}
+			}).Build();
+
+	await host.RunAsync();
+	```
+
+# 13. Integrate with ASP.Net Core Website and ABP Framework
+> Keywords: ASP.NET Core, ABP, Integrate
+
+## Integrate with ASP.Net Core Website
+- Yes, SuperSocket can run together with ASP.NET Core website side by side. What you should do are registering SuperSocket into the host builder of the ASP.NET Core and leaving the options in the configuration file or by code.
+
+- In the Program class, add more lines of code for SuperSocket:
+	```c#
+	//don't forget the usings
+	using SuperSocket;
+	using SuperSocket.ProtoBase;
+
+	public static IHostBuilder CreateHostBuilder(string[] args) =>
+			Host.CreateDefaultBuilder(args)
+					.ConfigureWebHostDefaults(webBuilder =>
+					{
+						webBuilder.UseStartup<Startup>();
+					})
+					.AsSuperSocketHostBuilder<TextPackageInfo, LinePipelineFilter>()
+					.UsePackageHandler(async (s, p) =>
+					{
+						// echo message back to client
+						await s.SendAsync(Encoding.UTF8.GetBytes(p.Text + "\r\n"));
+					});
+	```
+
+- And leave server options in the configuration file "appsettings.json":
+	```json
+	{
+		"Logging": {
+			"LogLevel": {
+			"Default": "Information",
+			"Microsoft": "Warning",
+			"Microsoft.Hosting.Lifetime": "Information"
+			}
+		},
+		"serverOptions": {
+			"name": "TestServer",
+			"listeners": [
+			{
+				"ip": "Any",
+				"port": 4040
+			}
+			]
+		},
+		"AllowedHosts": "*"
+	}
+	```
+
+## Integrate with ABP Framework
+- Coming soon...
+
+# 14. UDP Support in SuperSocket
+> Keywords: UDP
+
+## Enable UDP in SuperSocket
+- Beside TCP, SuperSocket can support UDP as well.
+
+- First of all, you need add reference to the package SuperSocket.Udp.
+	```
+	dotnet add package SuperSocket.Udp --version 2.0.0-*
+	```
+
+- After you create your SuperSocket host builder like TCP, you just need enable UDP with one extra line of code:
+	```
+	hostBuilder.UseUdp();
+	```
+
+## Use your own Session Identifier
+- For UDP SuperSocket server, the client IP address and port are used as session's identifier. But in some cases, you need use something like device id as session identifier. SuperSocket allows you to do it with IUdpSessionIdentifierProvider. You need implement this interface and then register it into the SuperSocket's host builder.
+
+## Define your UdpSessionIdentifierProvider:
+```c#
+public class MySessionIdentifierProvider : IUdpSessionIdentifierProvider
+{
+    public string GetSessionIdentifier(IPEndPoint remoteEndPoint, ArraySegment<byte> data)
+    {
+        // take the device ID from the package data
+        ....
+        //return deviceID;
+    }
+}
+```
+
+## Register your UdpSessionIdentifierProvider:
+```c#
+hostBuilder.ConfigureServices((context, services) =>
+{
+    services.AddSingleton<IUdpSessionIdentifierProvider, MySessionIdentifierProvider>();                
+})
+```
