@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArraySegmentEx.cs" />
+    <Compile Include="BinaryUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchMarkState.cs" />
   </ItemGroup>
