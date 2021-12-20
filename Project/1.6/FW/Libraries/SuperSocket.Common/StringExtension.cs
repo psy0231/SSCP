@@ -35,7 +35,7 @@ namespace SuperSocket.Common
 
             int value;
 
-            if (!int.TryParse(source,out value))
+            if (!int.TryParse(source, out value))
             {
                 value = defaultValue;
             }

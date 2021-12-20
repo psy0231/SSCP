@@ -142,6 +142,8 @@ namespace SuperSocket.Common
         }
     }
     
+    
+
     /// <summary>
     /// ISmartPoolSourceCreator
     /// </summary>
@@ -157,6 +159,10 @@ namespace SuperSocket.Common
         ISmartPoolSource Create(int size, out T[] poolItems);
     }
 
+    /// <summary>
+    /// The smart pool
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class SmartPool<T> : ISmartPool<T>
     {
         private ConcurrentStack<T> m_GlobalStack;
@@ -229,6 +235,12 @@ namespace SuperSocket.Common
             } 
         }
         
+        /// <summary>
+        /// Initializes the specified min and max pool size.
+        /// </summary>
+        /// <param name="minPoolSize">The min size of the pool.</param>
+        /// <param name="maxPoolSize">The max size of the pool.</param>
+        /// <param name="sourceCreator">The source creator.</param>
         public void Initialize(int minPoolSize, int maxPoolSize, ISmartPoolSourceCreator<T> sourceCreator)
         {
             m_MinPoolSize = minPoolSize;
@@ -272,7 +284,6 @@ namespace SuperSocket.Common
         }
 
         private int m_IsIncreasing = 0;
-        
 
         /// <summary>
         /// Pushes the specified item into the pool.
@@ -285,18 +296,18 @@ namespace SuperSocket.Common
 
         bool TryPopWithWait(out T item, int waitTicks)
         {
-            var spinwait = new SpinWait();
+            var spinWait = new SpinWait();
 
             while (true)
             {
-                spinwait.SpinOnce();
+                spinWait.SpinOnce();
 
                 if (m_GlobalStack.TryPop(out item))
                 {
                     return true;
                 }
 
-                if (spinwait.Count >= waitTicks)
+                if (spinWait.Count >= waitTicks)
                 {
                     return false;
                 }

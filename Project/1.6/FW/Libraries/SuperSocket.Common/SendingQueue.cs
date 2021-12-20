@@ -26,7 +26,7 @@ namespace SuperSocket.Common
 
         private ushort m_TrackID = 1;
 
-        private int m_InnerOFfset = 0;
+        private int m_InnerOffset = 0;
 
         /// <summary>
         /// Gets the track ID.
@@ -61,7 +61,7 @@ namespace SuperSocket.Common
 
             var oldCount = m_CurrentCount;
 
-            if (oldCount >= m_Capacity)
+            if (oldCount >= Capacity)
             {
                 return false;
             }
@@ -78,6 +78,7 @@ namespace SuperSocket.Common
 
             int compareCount = Interlocked.CompareExchange(ref m_CurrentCount, oldCount + 1, oldCount);
 
+            //conflicts
             if (compareCount != oldCount)
             {
                 conflict = true;
@@ -114,6 +115,7 @@ namespace SuperSocket.Common
                     return true;
                 }
 
+                //Needn't retry
                 if (!conflict)
                 {
                     break;
@@ -168,7 +170,7 @@ namespace SuperSocket.Common
             int newItemCount = items.Count;
             int expectedCount = oldCount + newItemCount;
 
-            if (expectedCount > m_Capacity)
+            if (expectedCount > Capacity)
             {
                 return false;
             }
@@ -192,6 +194,7 @@ namespace SuperSocket.Common
             }
 
             var queue = m_GlobalQueue;
+
             for (int i = 0; i < items.Count; i++)
             {
                 queue[m_Offset + oldCount + i] = items[i];
@@ -222,7 +225,7 @@ namespace SuperSocket.Common
             spinWait.SpinOnce();
             
             //Wait until all insertings are finished
-            while (m_UpdatingCount >0)
+            while (m_UpdatingCount > 0)
             {
                 spinWait.SpinOnce();
             }
@@ -286,7 +289,7 @@ namespace SuperSocket.Common
         {
             get
             {
-                return m_CurrentCount - m_InnerOFfset;
+                return m_CurrentCount - m_InnerOffset;
             }
             
         }
@@ -334,7 +337,7 @@ namespace SuperSocket.Common
         /// <exception cref="System.NotSupportedException"></exception>
         public void RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
         
         /// <summary>
@@ -347,7 +350,7 @@ namespace SuperSocket.Common
         {
             get
             {
-                var targetIndex = m_Offset + m_InnerOFfset + index;
+                var targetIndex = m_Offset + m_InnerOffset + index;
                 var value = m_GlobalQueue[targetIndex];
 
                 if (value.Array != null)
@@ -373,7 +376,6 @@ namespace SuperSocket.Common
                     }
                 }
             }
-
             set
             {
                 throw new NotSupportedException();
@@ -411,7 +413,7 @@ namespace SuperSocket.Common
             }
 
             m_CurrentCount = 0;
-            m_InnerOFfset = 0;
+            m_InnerOffset = 0;
             Position = 0;
         }
         
@@ -475,9 +477,9 @@ namespace SuperSocket.Common
         /// <exception cref="System.NotSupportedException"></exception>
         public IEnumerator<ArraySegment<byte>> GetEnumerator()
         {
-            for (int i = 0; i < (m_CurrentCount - m_InnerOFfset); i++)
+            for (int i = 0; i < (m_CurrentCount - m_InnerOffset); i++)
             {
-                yield return m_GlobalQueue[m_Offset + m_InnerOFfset + i];
+                yield return m_GlobalQueue[m_Offset + m_InnerOffset + i];
             }
         }
         
@@ -499,10 +501,10 @@ namespace SuperSocket.Common
         /// <param name="offset">The binary data size should be trimed at the begining.</param>
         public void InternalTrim(int offset)
         {
-            var innerCount = m_CurrentCount - m_InnerOFfset;
+            var innerCount = m_CurrentCount - m_InnerOffset;
             var subTotal = 0;
 
-            for (int i = m_InnerOFfset; i < innerCount; i++)
+            for (int i = m_InnerOffset; i < innerCount; i++)
             {
                 var segment = m_GlobalQueue[m_Offset + i];
                 subTotal += segment.Count;
@@ -512,17 +514,17 @@ namespace SuperSocket.Common
                     continue;
                 }
 
-                m_InnerOFfset = i;
+                m_InnerOffset = i;
 
                 var rest = subTotal - offset;
-                m_GlobalQueue[m_Offset + i] =
-                    new ArraySegment<byte>(segment.Array, segment.Offset + segment.Count - rest, rest);
+                m_GlobalQueue[m_Offset + i] = new ArraySegment<byte>(segment.Array, segment.Offset + segment.Count - rest, rest);
 
                 break;
             }
         }
     }
     
+
     /// <summary>
     /// SendingQueueSourceCreator
     /// </summary>    
@@ -534,9 +536,9 @@ namespace SuperSocket.Common
         /// Initializes a new instance of the <see cref="SendingQueueSourceCreator" /> class.
         /// </summary>
         /// <param name="sendingQueueSize">Size of the sending queue.</param>
-        public SendingQueueSourceCreator(int sendgingQueueSize)
+        public SendingQueueSourceCreator(int sendingQueueSize)
         {
-            m_SendingQueueSize = sendgingQueueSize;
+            m_SendingQueueSize = sendingQueueSize;
         }
         
         /// <summary>

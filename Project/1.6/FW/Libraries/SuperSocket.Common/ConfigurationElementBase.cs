@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Runtime.Remoting.Messaging;
 using System.Xml;
@@ -8,6 +9,7 @@ namespace SuperSocket.Common
     /// <summary>
     /// ConfigurationElementBase
     /// </summary>
+    [Serializable]
     public class ConfigurationElementBase : ConfigurationElement
     {
         private bool m_NameRequired;
@@ -15,7 +17,8 @@ namespace SuperSocket.Common
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigurationElementBase"/> class.
         /// </summary>
-        public ConfigurationElementBase() : this(true)
+        public ConfigurationElementBase() 
+            : this(true)
         {
             
         }
@@ -51,6 +54,7 @@ namespace SuperSocket.Common
         protected override void DeserializeElement(XmlReader reader, bool serializeCollectionKey)
         {
             base.DeserializeElement(reader, serializeCollectionKey);
+
             if (m_NameRequired && string.IsNullOrEmpty(Name))
             {
                 throw new ConfigurationErrorsException("Required attribute 'name' not found.");
@@ -76,7 +80,7 @@ namespace SuperSocket.Common
         /// </returns>
         protected override bool OnDeserializeUnrecognizedAttribute(string name, string value)
         {
-            Options.Add(name,value);
+            Options.Add(name, value);
             return true;
         }
 

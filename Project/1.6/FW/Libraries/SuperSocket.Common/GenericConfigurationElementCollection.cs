@@ -8,9 +8,8 @@ namespace SuperSocket.Common
     /// </summary>
     /// <typeparam name="TConfigElement">The type of the config element.</typeparam>
     /// <typeparam name="TConfigInterface">The type of the config interface.</typeparam>
-    public class
-        GenericConfigurationElementCollectionBase<TConfigElement, TConfigInterface> : ConfigurationElementCollection,
-            IEnumerable<TConfigInterface> where TConfigElement : ConfigurationElement, TConfigInterface, new()
+    public class GenericConfigurationElementCollectionBase<TConfigElement, TConfigInterface> : ConfigurationElementCollection, IEnumerable<TConfigInterface> 
+        where TConfigElement : ConfigurationElement, TConfigInterface, new()
     {
         /// <summary>
         /// Gets or sets a property, attribute, or child element of this configuration element.
@@ -81,10 +80,8 @@ namespace SuperSocket.Common
     /// </summary>
     /// <typeparam name="TConfigElement">The type of the config element.</typeparam>
     /// <typeparam name="TConfigInterface">The type of the config interface.</typeparam>
-    public class
-        GenericConfigurationElementCollection<TConfigElement, TConfigInterface> :
-            GenericConfigurationElementCollectionBase<TConfigElement, TConfigInterface>,
-            IEnumerable<TConfigInterface> where TConfigElement : ConfigurationElementBase, TConfigInterface, new()
+    public class GenericConfigurationElementCollection<TConfigElement, TConfigInterface> : GenericConfigurationElementCollectionBase<TConfigElement, TConfigInterface>, IEnumerable<TConfigInterface> 
+        where TConfigElement : ConfigurationElementBase, TConfigInterface, new()
     {
         /// <summary>
         /// Gets the element key.

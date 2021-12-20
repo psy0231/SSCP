@@ -3,13 +3,21 @@ using System.Collections.Generic;
 using System.Dynamic;
 
 namespace SuperSocket.Common
-{
-    public static class DictionalryExtension
+{        
+    /// <summary>
+    /// Extension class for IDictionary
+    /// </summary>
+    public static class DictionaryExtension
     {
         /// <summary>
-        /// Extension class for IDictionary
+        /// Gets the value by key.
         /// </summary>
-        public static T GetValue<T>(this IDictionary<object, object> dictionary, object key) where T : new()
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dictionary">The dictionary.</param>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        public static T GetValue<T>(this IDictionary<object, object> dictionary, object key) 
+            where T : new()
         {
             T defaultValue = default(T);
             return GetValue<T>(dictionary, key, defaultValue);
@@ -26,6 +34,7 @@ namespace SuperSocket.Common
         public static T GetValue<T>(this IDictionary<object, object> dictionary, object key, T defaultValue)
         {
             object valueObj;
+            
             if (!dictionary.TryGetValue(key, out valueObj))
             {
                 return defaultValue;

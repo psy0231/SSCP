@@ -11,9 +11,9 @@ namespace SuperSocket.Common
     /// </summary>
     public class BufferManager
     {
-        int m_numBytes;
-        byte[] m_buffer;
-        Stack<int> m_freeIndexPool;
+        int m_numBytes;                 // the total number of bytes controlled by the buffer pool
+        byte[] m_buffer;                // the underlying byte array maintained by the Buffer Manager
+        Stack<int> m_freeIndexPool;     //
         int m_currentIndex;
         int m_bufferSize;
 
@@ -35,6 +35,7 @@ namespace SuperSocket.Common
         /// </summary>
         public void InitBuffer()
         {
+            // create one big large buffer and divide that out to each SocketAsyncEventArg object
             m_buffer = new byte[m_numBytes];
         }
 
@@ -54,11 +55,9 @@ namespace SuperSocket.Common
                 {
                     return false;
                 }
-                
                 args.SetBuffer(m_buffer, m_currentIndex, m_bufferSize);
                 m_currentIndex += m_bufferSize;
             }
-
             return true;
         }
 

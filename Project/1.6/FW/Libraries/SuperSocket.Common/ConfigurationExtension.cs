@@ -9,6 +9,9 @@ using System.Xml;
 
 namespace SuperSocket.Common
 {
+    /// <summary>
+    /// Configuration extension class
+    /// </summary>
     public static class ConfigurationExtension
     {
         /// <summary>
@@ -60,30 +63,25 @@ namespace SuperSocket.Common
         public static void Deserialize<TElement>(this TElement section, XmlReader reader)
             where TElement : ConfigurationElement
         {
-            if (section is ConfigurationElementCollection){}
+            if (section is ConfigurationElementCollection)
             {
-               var collectionType = section.GetType();
-               var att = collectionType.GetCustomAttributes(typeof(ConfigurationCollectionAttribute), true)
-                   .FirstOrDefault() as ConfigurationCollectionAttribute;
+                var collectionType = section.GetType();
+                var att = collectionType.GetCustomAttributes(typeof(ConfigurationCollectionAttribute), true).FirstOrDefault() as ConfigurationCollectionAttribute;
 
-               if (att != null)
-               {
-                   var property = collectionType.GetProperty("AddElementName",
-                       BindingFlags.NonPublic | BindingFlags.Instance);
-                   property.SetValue(section, att.AddItemName, null);
+                if (att != null)
+                {
+                    var property = collectionType.GetProperty("AddElementName", BindingFlags.NonPublic | BindingFlags.Instance);
+                    property.SetValue(section, att.AddItemName, null);
 
-                   property = collectionType.GetProperty("RemoveElementName",
-                       BindingFlags.NonPublic | BindingFlags.Instance);
-                   property.SetValue(section, att.RemoveItemName, null);
+                    property = collectionType.GetProperty("RemoveElementName", BindingFlags.NonPublic | BindingFlags.Instance);
+                    property.SetValue(section, att.RemoveItemName, null);
 
-                   property = collectionType.GetProperty("ClearElementName",
-                       BindingFlags.NonPublic | BindingFlags.Instance);
-                   property.SetValue(section, att.ClearItemsName, null);
-               }
+                    property = collectionType.GetProperty("ClearElementName", BindingFlags.NonPublic | BindingFlags.Instance);
+                    property.SetValue(section, att.ClearItemsName, null);
+                }
             }
 
-            var deserializeElementMethod =
-                typeof(TElement).GetMethod("DeserializeElement", BindingFlags.NonPublic | BindingFlags.Instance);
+            var deserializeElementMethod = typeof(TElement).GetMethod("DeserializeElement", BindingFlags.NonPublic | BindingFlags.Instance);
             deserializeElementMethod.Invoke(section, new object[] { reader, false });
         }
 
@@ -93,8 +91,10 @@ namespace SuperSocket.Common
         /// <typeparam name="TConfig">The type of the configuration.</typeparam>
         /// <param name="childConfig">The child configuration string.</param>
         /// <returns></returns>
-        public static TConfig DeserializeChildConfig<TConfig>(string childConfig) where TConfig : ConfigurationElement, new()
+        public static TConfig DeserializeChildConfig<TConfig>(string childConfig) 
+            where TConfig : ConfigurationElement, new()
         {
+            // removed extra namespace prefix
             childConfig = childConfig.Replace("xmlns=\"http://schema.supersocket.net/supersocket\"", string.Empty);
 
             XmlReader reader = new XmlTextReader(new StringReader(childConfig));
@@ -141,9 +141,7 @@ namespace SuperSocket.Common
                 return source;
             }
 
-            var configProperty =
-                typeof(ConfigurationElement).GetProperty("Configuration",
-                    BindingFlags.Instance | BindingFlags.NonPublic);
+            var configProperty = typeof(ConfigurationElement).GetProperty("Configuration", BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (configProperty == null)
             {
@@ -161,11 +159,10 @@ namespace SuperSocket.Common
         /// <param name="source">The source.</param>
         /// <exception cref="System.Exception">Cannot find expected property 'Item' from the type 'ConfigurationElement'.</exception>
         public static void LoadFrom(this ConfigurationElement configElement, object source)
-        {
-            var indexPropertySetter = configElement.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetProperty)
-                .FirstOrDefault(
-                    p =>
+        {            
+            // get index property setter
+            var indexPropertySetter = configElement.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetProperty)
+                .FirstOrDefault(p =>
                     {
                         if (!p.Name.Equals("Item"))
                         {
@@ -187,8 +184,8 @@ namespace SuperSocket.Common
                 throw new Exception("Cannot find expected property 'Item' from the type 'ConfigurationElement'.");
             }
 
-            var properties = source.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty);
+            // source properties
+            var properties = source.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty);
 
             var targetProperties = configElement.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty)
@@ -223,7 +220,7 @@ namespace SuperSocket.Common
                 nameChars[0] = char.ToLower(nameChars[0]);
                 var propertyName = new string(nameChars);
                 
-                indexPropertySetter.SetValue(configElement, value, new object[]{propertyName});
+                indexPropertySetter.SetValue(configElement, value, new object[] { propertyName });
             }
 
             foreach (var pair in writableAttrs)
@@ -242,13 +239,11 @@ namespace SuperSocket.Common
         {
             var configElementType = typeof(ConfigurationElement);
 
-            var configProperty =
-                configElementType.GetProperty("CurrentConfiguration", BindingFlags.Instance | BindingFlags.Public);
+            var configProperty = configElementType.GetProperty("CurrentConfiguration", BindingFlags.Instance | BindingFlags.Public);
 
-            if (configProperty == null)
+            if(configProperty == null)
             {
-                configProperty =
-                    configElementType.GetProperty("Configuration", BindingFlags.Instance | BindingFlags.NonPublic);
+                configProperty = configElementType.GetProperty("Configuration", BindingFlags.Instance | BindingFlags.NonPublic);
             }
 
             if (configProperty == null)
@@ -265,39 +260,41 @@ namespace SuperSocket.Common
             appDomain.SetupInformation.ConfigurationFile = configFilePath;
 
             var configSystem = typeof(ConfigurationManager)
-                .GetField("configSystem", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+                .GetField("configSystem", BindingFlags.Static | BindingFlags.NonPublic)
+                .GetValue(null);
             
+            // clear previous state
             typeof(ConfigurationManager)
-                .Assembly
-                .GetTypes()
-                .Where(
-                    x => 
-                        x.FullName == "System.Configuration.ClientConfigurationSystem")
+                .Assembly.GetTypes()
+                .Where(x => x.FullName == "System.Configuration.ClientConfigurationSystem")
                 .First()
                 .GetField("cfg", BindingFlags.Instance | BindingFlags.NonPublic)
-                .SetValue(configSystem,null);
+                .SetValue(configSystem, null);
         }
 
         private static void ResetConfigurationForDotNet(AppDomain appDomain, string configFilePath)
         {
             appDomain.SetData("APP_CONFIG_FILE", configFilePath);
 
+            // clear previous state
             BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
             
             typeof(ConfigurationManager)
-                .GetField("s_initState",flags)
+                .GetField("s_initState", flags)
                 .SetValue(null, 0);
             
             typeof(ConfigurationManager)
-                .GetField("s_configSystem",flags)
+                .GetField("s_configSystem", flags)
                 .SetValue(null, null);
+                
             typeof(ConfigurationManager)
                 .Assembly.GetTypes()
-                .Where(x => x.FullName == "System.Configuration.ClientConfigPath")
+                .Where(x => x.FullName == "System.Configuration.ClientConfigPaths")
                 .First()
-                .GetField("s_current",flags)
+                .GetField("s_current", flags)
                 .SetValue(null, null);
         }
+        
         /// <summary>
         /// Reset application's configuration to a another config file
         /// </summary>

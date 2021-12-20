@@ -8,7 +8,6 @@
             Offset = offset;
             Count = count;
         }
-
         /// <summary>
         /// Gets the array.
         /// </summary>
@@ -23,7 +22,7 @@
         /// </summary>
         public int Count
         {
-            get ;
+            get;
             private set;
         }
         
