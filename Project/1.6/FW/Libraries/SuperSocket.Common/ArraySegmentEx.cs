@@ -1,6 +1,6 @@
 ﻿namespace SuperSocket.Common
 {
-    public class ArraySegmentEx<T>
+    class ArraySegmentEx<T>
     {
         public ArraySegmentEx(T[] array, int offset, int count)
         {
@@ -17,7 +17,16 @@
             get;
             private set;
         }
-
+        
+        /// <summary>
+        /// Gets the count.
+        /// </summary>
+        public int Count
+        {
+            get ;
+            private set;
+        }
+        
         /// <summary>
         /// Gets the offset.
         /// </summary>
@@ -26,13 +35,7 @@
             get;
             private set;
         }
-
-        public int Count
-        {
-            get ;
-            private set;
-        }
-
+        
         public int From
         {
             get;

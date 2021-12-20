@@ -44,9 +44,12 @@
   <ItemGroup>
     <Compile Include="ArraySegmentEx.cs" />
     <Compile Include="ArraySegmentList.cs" />
+    <Compile Include="AssemblyUtil.cs" />
     <Compile Include="BinaryUtil.cs" />
+    <Compile Include="BufferManager.cs" />
     <Compile Include="ConfigurationElementBase.cs" />
     <Compile Include="ConfigurationExtension.cs" />
+    <Compile Include="DictionaryExtension.cs" />
     <Compile Include="ErrorEventArgs.cs" />
     <Compile Include="GenericConfigurationElementCollection.cs" />
     <Compile Include="SendingQueue.cs" />
@@ -56,6 +59,7 @@
     <Compile Include="SearchMarkState.cs" />
     <Compile Include="SocketEx.cs" />
     <Compile Include="StringExtension.cs" />
+    <Compile Include="ThreadPoolEx.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
