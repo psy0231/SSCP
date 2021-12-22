@@ -1,15 +1,15 @@
 # SoceketBase
-- [ ] IRawDataProcessor
+- [x] IRawDataProcessor
 - [x] IsolationMode
-- [ ] IConfigValueChangeNotifier
+- [x] IConfigValueChangeNotifier
 - [x] ISessionBase
 - [x] ISystemEndPoint
 - [x] StatusInfoCollection
-- [ ] StartResult
+- [x] StartResult
 - [x] ServerStateConst
 - [x] ServerState
-- [ ] CloseReason
-- [?] SessionHandler
+- [x] CloseReason
+- [x] SessionHandler
 - [x] ListenerInfo
 - [x] SocketMode
 - [?] RequestHandler
@@ -18,33 +18,33 @@
 - [ ] ISocketServer
 
 ## Command
-- ICommand
-- ICommandLoader
-- CommandUpdateAction
-
+- [?] ICommand
+- [?] ICommandLoader
+- [x] CommandUpdateAction
+    - [x] CommandUpdateInfo
 ## Config
-- ITypeProvider
-- ICertificateConfig
-- IListenerConfig
-- IcommandAssemblyConfig
-- HotUpdateAttribute
+- [x] ITypeProvider
+- [x] ICertificateConfig
+- [x] IListenerConfig
+- [x] IcommandAssemblyConfig
+- [x] HotUpdateAttribute
 
 ## Logging
-- ILog
+- [ ] ILog
 
 ## MetaData
-- StatusInfoAttribute
-- AppServerMetaDataTypeAttribute
-- StatusInfoKets
+- [ ] StatusInfoAttribute
+- [ ] AppServerMetaDataTypeAttribute
+- [ ] StatusInfoKets
 
 ## Protocol
-- IRequestInfo
-- IRequestInfoParser
-- IReceiverFilterFactory
-- FilterState
-- IOffsetAdapter
+- [ ] IRequestInfo
+- [ ] IRequestInfoParser
+- [ ] IReceiverFilterFactory
+- [ ] FilterState
+- [ ] IOffsetAdapter
 - 
 ## Provider
-- ExportFactory
+- [ ] ExportFactory
 - 
 ## Security
