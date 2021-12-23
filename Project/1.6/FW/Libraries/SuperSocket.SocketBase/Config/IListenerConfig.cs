@@ -2,7 +2,7 @@
 {
     public interface IListenerConfig
     {
-        string ip
+        string Ip
         {
             get;
         }
