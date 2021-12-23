@@ -11,6 +11,6 @@
         /// </summary>
         /// <param name="source">The source.</param>
         /// <returns></returns>
-        TRequestInfo parseRequestInfo(string souece);
+        TRequestInfo parseRequestInfo(string source);
     }
 }
