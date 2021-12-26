@@ -14,7 +14,7 @@ namespace SuperSocket.SocketBase.Config
             get;
         }
 
-        string StroreName
+        string StroeName
         {
             get;
         }

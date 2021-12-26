@@ -82,6 +82,7 @@
         <Compile Include="Protocol\UdpRequestInfo.cs" />
         <Compile Include="Provider\ExportFactory.cs" />
         <Compile Include="RequestHandler.cs" />
+        <Compile Include="Security\CertificateManager.cs" />
         <Compile Include="ServerState.cs" />
         <Compile Include="SessionHandler.cs" />
         <Compile Include="SocketMode.cs" />
@@ -95,9 +96,6 @@
         <Project>{9914cc0a-6688-486d-bce7-2b01ed805552}</Project>
         <Name>SuperSocket.Common</Name>
       </ProjectReference>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Security" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
