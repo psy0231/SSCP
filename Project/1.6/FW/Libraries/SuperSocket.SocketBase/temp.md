@@ -51,6 +51,13 @@
 
 ## Logging
 - [x] ILog
+---
+- ILogFactory
+- ConsoleLog
+- ConsoleLogFactory
+- Log4NetLog
+- LogFactoryBase
+- Log4NetLogFactory
 
 ## MetaData
 - [x] StatusInfoAttribute
