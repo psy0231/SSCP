@@ -9,26 +9,26 @@ namespace SuperSocket.SocketBase.Config
     [Serializable]
     public class CertificateConfig : ICertificateConfig
     {
-        #region ICertificationConfig Members
+        #region ICertificateConfig Members
 
         /// <summary>
         /// Gets/sets the file path.
         /// </summary>
         public string FilePath { get; set; }
-      
+
         /// <summary>
         /// Gets/sets the password.
         /// </summary>
         public string Password { get; set; }
-     
+
         /// <summary>
         /// Gets/sets the the store where certificate locates.
         /// </summary>
         /// <value>
         /// The name of the store.
         /// </value>
-        public string StroreName { get; set; }
-      
+        public string StoreName { get; set; }
+
         /// <summary>
         /// Gets/sets the store location of the certificate.
         /// </summary>
@@ -36,20 +36,20 @@ namespace SuperSocket.SocketBase.Config
         /// The store location.
         /// </value>
         public StoreLocation StoreLocation { get; set; }
-      
+
         /// <summary>
         /// Gets/sets the thumbprint.
         /// </summary>
         public string Thumbprint { get; set; }
-     
+
         /// <summary>
         /// Gets/sets a value indicating whether [client certificate required].
         /// </summary>
         /// <value>
         /// <c>true</c> if [client certificate required]; otherwise, <c>false</c>.
         /// </value>
-        public bool ClientSertificateRequired { get; set; }
-       
+        public bool ClientCertificateRequired { get; set; }
+
         /// <summary>
         /// Gets/sets a value that will be used to instantiate the X509Certificate2 object in the CertificateManager
         /// </summary>

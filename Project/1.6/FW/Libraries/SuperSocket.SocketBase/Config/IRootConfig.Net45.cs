@@ -12,6 +12,5 @@
         /// The default culture.
         /// </value>
         string DefaultCulture { get; }
-        
     }
 }

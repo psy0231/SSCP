@@ -41,18 +41,31 @@
     <ItemGroup>
         <Compile Include="AppServerBase.ConfigHotUpdate.cs" />
         <Compile Include="Class1.cs" />
+        <Compile Include="Command\CommandUpdateEventArgs.cs" />
         <Compile Include="Command\CommandUpdateInfo.cs" />
         <Compile Include="Command\ICommand.cs" />
         <Compile Include="Command\ICommandLoader.cs" />
         <Compile Include="Config\CertificateConfig.cs" />
+        <Compile Include="Config\CommandAssemblyConfig.cs" />
+        <Compile Include="Config\ConfigurationSource.cs" />
         <Compile Include="Config\HotUpdateAttribute.cs" />
         <Compile Include="Config\ICertificateConfig.cs" />
         <Compile Include="Config\ICommandAssemblyConfig.cs" />
+        <Compile Include="Config\IConfigurationSource.cs" />
         <Compile Include="Config\IListenerConfig.cs" />
         <Compile Include="Config\IRootConfig.cs" />
         <Compile Include="Config\IRootConfig.Net45.cs" />
+        <Compile Include="Config\IServerConfig.cs" />
+        <Compile Include="Config\IServerConfig.Net45.cs" />
         <Compile Include="Config\ITypeProvider.cs" />
         <Compile Include="Config\ListenerConfig.cs" />
+        <Compile Include="Config\RootConfig.cs" />
+        <Compile Include="Config\RootConfig.Net45.cs" />
+        <Compile Include="Config\ServerConfig.cs" />
+        <Compile Include="Config\ServerConfig.Net45.cs" />
+        <Compile Include="Config\TypeProvider.cs" />
+        <Compile Include="Config\TypeProviderCollection.cs" />
+        <Compile Include="Config\TypeProviderConfig.cs" />
         <Compile Include="IAppServer.cs" />
         <Compile Include="IAppSession.cs" />
         <Compile Include="IBootstrap.cs" />
@@ -60,6 +73,7 @@
         <Compile Include="ISocketServer.cs" />
         <Compile Include="IsolationMode.cs" />
         <Compile Include="ISoscketSession.cs" />
+        <Compile Include="IStatusInfoSource.cs" />
         <Compile Include="ISystemEndPoint.cs" />
         <Compile Include="ListenerInfo.cs" />
         <Compile Include="Logging\ILog.cs" />
@@ -67,6 +81,7 @@
         <Compile Include="Metadata\DefaultAppServerMetadata.cs" />
         <Compile Include="Metadata\StatusInfoAttribute.cs" />
         <Compile Include="Metadata\StatusInfoKeys.cs" />
+        <Compile Include="NodeStatus.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Protocol\BasicRequestInfoParser.cs" />
         <Compile Include="Protocol\BinaryRequestInfo.cs" />
