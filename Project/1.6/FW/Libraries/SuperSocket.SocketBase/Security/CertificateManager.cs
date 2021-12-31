@@ -8,7 +8,7 @@ namespace SuperSocket.SocketBase.Security
 {
     static class CertificateManager
     {
-        internal static X509Certificate Initialize(ICertificateConfig cerConfig, Func<string, string> relativePatheHandler)
+        internal static X509Certificate Initialize(ICertificateConfig cerConfig, Func<string, string> relativePathHandler)
         {
             if (!string.IsNullOrEmpty(cerConfig.FilePath))
             {
@@ -20,7 +20,7 @@ namespace SuperSocket.SocketBase.Security
                 }
                 else
                 {
-                    filePath = relativePatheHandler(cerConfig.FilePath);
+                    filePath = relativePathHandler(cerConfig.FilePath);
                 }
 
                 return new X509Certificate2(filePath, cerConfig.Password, cerConfig.KeyStorageFlags);
@@ -28,11 +28,10 @@ namespace SuperSocket.SocketBase.Security
             }
             else
             {
-                var storeName = cerConfig.StroeName;
-
+                var storeName = cerConfig.StoreName;
                 if (string.IsNullOrEmpty(storeName))
                 {
-                    storeName = "ROot";
+                    storeName = "Root";
                 }
 
                 var store = new X509Store(storeName, cerConfig.StoreLocation);
@@ -47,6 +46,5 @@ namespace SuperSocket.SocketBase.Security
                 return cert;
             }
         }
-        
     }
 }
