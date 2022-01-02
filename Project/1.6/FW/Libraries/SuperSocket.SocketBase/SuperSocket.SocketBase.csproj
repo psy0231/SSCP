@@ -44,11 +44,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppServerBase.ConfigHotUpdate.cs" />
+    <Compile Include="Async.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="Command\CommandBase.cs" />
     <Compile Include="Command\CommandUpdateEventArgs.cs" />
     <Compile Include="Command\CommandUpdateInfo.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\ICommandLoader.cs" />
+    <Compile Include="Command\StringCommandBase.cs" />
     <Compile Include="Config\CertificateConfig.cs" />
     <Compile Include="Config\CommandAssemblyConfig.cs" />
     <Compile Include="Config\ConfigurationSource.cs" />
@@ -73,12 +76,14 @@
     <Compile Include="IAppServer.cs" />
     <Compile Include="IAppSession.cs" />
     <Compile Include="IBootstrap.cs" />
+    <Compile Include="ILoggerProvider.cs" />
     <Compile Include="ISessionBase.cs" />
     <Compile Include="ISocketServer.cs" />
     <Compile Include="IsolationMode.cs" />
     <Compile Include="ISoscketSession.cs" />
     <Compile Include="IStatusInfoSource.cs" />
     <Compile Include="ISystemEndPoint.cs" />
+    <Compile Include="IWorkltem.cs" />
     <Compile Include="ListenerInfo.cs" />
     <Compile Include="Logging\ConsoleLog.cs" />
     <Compile Include="Logging\ConsoleLogFactory.cs" />
@@ -98,12 +103,14 @@
     <Compile Include="Protocol\FilterState.cs" />
     <Compile Include="Protocol\IOffsetAdapter.cs" />
     <Compile Include="Protocol\IReceiveFilter.cs" />
+    <Compile Include="Protocol\IReceiveFilterInitializer.cs" />
     <Compile Include="Protocol\IReceiverFilterFactory.cs" />
     <Compile Include="Protocol\IRequestInfo.cs" />
     <Compile Include="Protocol\IRequestInfoParser.cs" />
     <Compile Include="Protocol\ReceiveFilterBase.cs" />
     <Compile Include="Protocol\RequestInfo.cs" />
     <Compile Include="Protocol\StringRequsetInfo.cs" />
+    <Compile Include="Protocol\TerminatorReceiveFilter.cs" />
     <Compile Include="Protocol\UdpRequestInfo.cs" />
     <Compile Include="Provider\ExportFactory.cs" />
     <Compile Include="RequestHandler.cs" />

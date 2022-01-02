@@ -19,6 +19,10 @@
 - ConfigValueChangeNotifier
 - NodeStatus
 - IStatusInfoSource
+- ILogProvider
+- Async
+- IDynamicBootstrap
+- IWorkItemBase
 
 ## Command
 - [?] ICommand
@@ -27,6 +31,9 @@
     - [x] CommandUpdateInfo
 ---
 - CommandUpdateEventArgs
+- ICommand(ICommand)
+- MockupCommand(ICommand)
+- CommandBase
 
 ## Config
 - [x] ITypeProvider

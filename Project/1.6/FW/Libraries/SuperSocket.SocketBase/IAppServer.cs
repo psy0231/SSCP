@@ -2,7 +2,10 @@
 
 namespace SuperSocket.SocketBase
 {
-
+    public interface IAppServer : IWorkItem, ILoggerProvider
+    {
+        
+    }
     /// <summary>
     /// The raw data processor
     /// </summary>
