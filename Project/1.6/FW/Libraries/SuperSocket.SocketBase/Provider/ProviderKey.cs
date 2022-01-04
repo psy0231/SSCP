@@ -1,7 +1,8 @@
 ﻿using System;
-using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketBase.Logging;
+using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketBase.Protocol;
+
 
 namespace SuperSocket.SocketBase.Provider
 {
@@ -46,7 +47,7 @@ namespace SuperSocket.SocketBase.Provider
             SocketServerFactory = new ProviderKey { Name = "SocketServerFactory", Type = typeof(ISocketServerFactory) };
             ConnectionFilter = new ProviderKey { Name = "ConnectionFilter", Type = typeof(IConnectionFilter) };
             LogFactory = new ProviderKey { Name = "LogFactory", Type = typeof(ILogFactory) };
-            ReceiveFilterFactory = new ProviderKey { Name = "ReceiveFilterFactory", Type = typeof(IReceiverFilterFactory) };
+            ReceiveFilterFactory = new ProviderKey { Name = "ReceiveFilterFactory", Type = typeof(IReceiveFilterFactory) };
             CommandLoader = new ProviderKey { Name = "CommandLoader", Type = typeof(ICommandLoader) };
         }
 

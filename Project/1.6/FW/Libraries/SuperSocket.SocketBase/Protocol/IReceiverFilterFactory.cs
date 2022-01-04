@@ -5,7 +5,7 @@ namespace SuperSocket.SocketBase.Protocol
     /// <summary>
     /// Receive filter factory interface
     /// </summary>
-    public interface IReceiverFilterFactory
+    public interface IReceiveFilterFactory
     {
         
     }
@@ -14,7 +14,7 @@ namespace SuperSocket.SocketBase.Protocol
     /// Receive filter factory interface
     /// </summary>
     /// <typeparam name="TRequestInfo">The type of the request info.</typeparam>
-    public interface IReceiverFilterFactory<TRequestInfo> : IReceiverFilterFactory
+    public interface IReceiveFilterFactory<TRequestInfo> : IReceiveFilterFactory
         where TRequestInfo : IRequestInfo
     {
         /// <summary>
@@ -26,7 +26,7 @@ namespace SuperSocket.SocketBase.Protocol
         /// <returns>
         /// the new created request filer assosiated with this socketSession
         /// </returns>
-        IReceiverFilter<TRequestInfo> CreateFileter(IAppServer appServer, IAppSession appSession,
+        IReceiveFilter<TRequestInfo> CreateFileter(IAppServer appServer, IAppSession appSession,
             IPEndPoint remoteEndPoint);
     }
 }

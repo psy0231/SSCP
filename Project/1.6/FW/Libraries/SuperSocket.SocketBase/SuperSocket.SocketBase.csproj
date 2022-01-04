@@ -46,6 +46,7 @@
     <Compile Include="AppServerBase.ConfigHotUpdate.cs" />
     <Compile Include="Async.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="CommandExecutingContext.cs" />
     <Compile Include="Command\CommandBase.cs" />
     <Compile Include="Command\CommandUpdateEventArgs.cs" />
     <Compile Include="Command\CommandUpdateInfo.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Logging\Log4NetLogFactory.cs" />
     <Compile Include="Logging\LogFactoryBase.cs" />
     <Compile Include="Metadata\AppServerMetadataTypeAttribute.cs" />
+    <Compile Include="Metadata\CommandFilterAttribute.cs" />
     <Compile Include="Metadata\DefaultAppServerMetadata.cs" />
     <Compile Include="Metadata\StatusInfoAttribute.cs" />
     <Compile Include="Metadata\StatusInfoKeys.cs" />

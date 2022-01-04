@@ -20,7 +20,7 @@
         /// <summary>
         /// The total thread count
         /// </summary>
-        public const string TotalThreadConst = "TotalThreadConst";
+        public const string TotalThreadCount = "TotalThreadCount";
 
         /// <summary>
         /// The available working threads count
@@ -49,7 +49,8 @@
         /// <summary>
         /// The started time.
         /// </summary>
-        public const string StartTime = "StartTime";
+        public const string StartedTime = "StartedTime";
+
 
         /// <summary>
         /// 	<c>true</c> if this instance is running; otherwise, <c>false</c>.
@@ -79,6 +80,7 @@
         /// </value>
         public const string RequestHandlingSpeed = "RequestHandlingSpeed";
 
+
         /// <summary>
         /// Gets or sets the listeners.
         /// </summary>
@@ -95,5 +97,6 @@
         public const string TotalSendingQueueItems = "TotalSendingQueueItems";
 
         #endregion
+        
     }
 }

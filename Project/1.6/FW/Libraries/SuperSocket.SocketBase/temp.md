@@ -30,6 +30,7 @@
 - IRequestHandler(in IAppServer)
 - ISocketServerFactory
 - IConnectionFilter
+- CommandExecutingContext
 
 ## Command
 - [?] ICommand
@@ -80,7 +81,7 @@
 
 ---
 - DefaultAppServerMetadata
-- 
+- CommandFilterAttribute
 
 ## Protocol
 - [x] IRequestInfo

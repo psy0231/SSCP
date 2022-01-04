@@ -82,10 +82,9 @@ namespace SuperSocket.SocketBase.Provider
         /// <param name="name">The name.</param>
         /// <param name="type">The type.</param>
         public ProviderFactoryInfo(ProviderKey key, string name, Type type)
+            : this(key, name, type.AssemblyQualifiedName)
         {
-            Key = key;
-            Name = name;
-            ExportFactory = new ExportFactory(type.AssemblyQualifiedName);
+
         }
     }
 }

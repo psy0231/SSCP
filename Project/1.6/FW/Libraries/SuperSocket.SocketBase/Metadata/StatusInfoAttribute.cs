@@ -16,7 +16,7 @@ namespace SuperSocket.SocketBase.Metadata
         /// </summary>
         public StatusInfoAttribute()
         {
-            OutputInperfLog = true;
+            OutputInPerfLog = true;
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace SuperSocket.SocketBase.Metadata
         /// <value>
         ///   <c>true</c> if [output in perf log]; otherwise, <c>false</c>.
         /// </value>
-        public bool OutputInperfLog
+        public bool OutputInPerfLog
         {
             get;
             set;
