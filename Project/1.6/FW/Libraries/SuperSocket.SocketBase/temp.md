@@ -23,6 +23,13 @@
 - Async
 - IDynamicBootstrap
 - IWorkItemBase
+- ISocketSession
+- IAppSession(part of)
+- IRemoteCertificateValidator(in IAppServer)
+- ISocketServerAccessor(in IAppServer)
+- IRequestHandler(in IAppServer)
+- ISocketServerFactory
+- IConnectionFilter
 
 ## Command
 - [?] ICommand
@@ -94,5 +101,7 @@
 
 ## Provider
 - [x] ExportFactory
-- 
+---
+- ProviderKey
+- ProviderFactoryInfo
 ## Security

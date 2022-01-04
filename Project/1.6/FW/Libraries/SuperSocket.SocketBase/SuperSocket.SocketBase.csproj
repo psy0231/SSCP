@@ -76,9 +76,11 @@
     <Compile Include="IAppServer.cs" />
     <Compile Include="IAppSession.cs" />
     <Compile Include="IBootstrap.cs" />
+    <Compile Include="IConnectionFilter.cs" />
     <Compile Include="ILoggerProvider.cs" />
     <Compile Include="ISessionBase.cs" />
     <Compile Include="ISocketServer.cs" />
+    <Compile Include="ISocketServerFactory.cs" />
     <Compile Include="IsolationMode.cs" />
     <Compile Include="ISoscketSession.cs" />
     <Compile Include="IStatusInfoSource.cs" />
@@ -113,6 +115,8 @@
     <Compile Include="Protocol\TerminatorReceiveFilter.cs" />
     <Compile Include="Protocol\UdpRequestInfo.cs" />
     <Compile Include="Provider\ExportFactory.cs" />
+    <Compile Include="Provider\ProviderFactoryInfo.cs" />
+    <Compile Include="Provider\ProviderKey.cs" />
     <Compile Include="RequestHandler.cs" />
     <Compile Include="Security\CertificateManager.cs" />
     <Compile Include="ServerState.cs" />
