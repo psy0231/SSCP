@@ -3,7 +3,7 @@
     /// <summary>
     /// String type request information
     /// </summary>
-    public class StringRequsetInfo : RequestInfo<string>
+    public class StringRequestInfo : RequestInfo<string>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StringRequestInfo"/> class.
@@ -11,7 +11,7 @@
         /// <param name="key">The key.</param>
         /// <param name="body">The body.</param>
         /// <param name="parameters">The parameters.</param>
-        public StringRequsetInfo(string key, string body, string[] parameters) 
+        public StringRequestInfo(string key, string body, string[] parameters) 
             : base(key, body)
         {
             Parameters = parameters;
@@ -32,7 +32,7 @@
         /// <returns></returns>
         public string GetFirstParam()
         {
-            if (Parameters.Length > 0)
+            if(Parameters.Length > 0)
             {
                 return Parameters[0];
             }

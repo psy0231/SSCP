@@ -3,7 +3,7 @@
     /// <summary>
     /// Binary type request information
     /// </summary>
-    public class BinaryRequestInfo : RequestInfo<byte[]>
+    public class BinaryRequestInfo :  RequestInfo<byte[]>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryRequestInfo"/> class.

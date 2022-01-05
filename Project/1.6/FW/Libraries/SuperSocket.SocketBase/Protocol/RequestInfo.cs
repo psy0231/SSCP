@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.Design;
-
+﻿
 namespace SuperSocket.SocketBase.Protocol
 {
     /// <summary>
@@ -12,7 +10,7 @@ namespace SuperSocket.SocketBase.Protocol
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestInfo&lt;TRequestBody&gt;"/> class.
         /// </summary>
-        public RequestInfo()
+        protected RequestInfo()
         {
             
         }
@@ -62,8 +60,7 @@ namespace SuperSocket.SocketBase.Protocol
     /// </summary>
     /// <typeparam name="TRequestHeader">The type of the request header.</typeparam>
     /// <typeparam name="TRequestBody">The type of the request body.</typeparam>
-    public class RequestInfo<TRequestHeader, TRequestBody> : RequestInfo<TRequestBody>,
-        IRequestInfo<TRequestHeader, TRequestBody>
+    public class RequestInfo<TRequestHeader, TRequestBody> : RequestInfo<TRequestBody>, IRequestInfo<TRequestHeader, TRequestBody>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestInfo&lt;TRequestHeader, TRequestBody&gt;"/> class.
@@ -72,14 +69,13 @@ namespace SuperSocket.SocketBase.Protocol
         {
             
         }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestInfo&lt;TRequestHeader, TRequestBody&gt;"/> class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="header">The header.</param>
         /// <param name="body">The body.</param>
-        public RequestInfo( string key, TRequestHeader header, TRequestBody body)
+        public RequestInfo(string key, TRequestHeader header, TRequestBody body)
             : base(key, body)
         {
             Header = header;
@@ -96,7 +92,6 @@ namespace SuperSocket.SocketBase.Protocol
             base.Initialize(key, body);
             Header = header;
         }
-
         /// <summary>
         /// Gets the header.
         /// </summary>

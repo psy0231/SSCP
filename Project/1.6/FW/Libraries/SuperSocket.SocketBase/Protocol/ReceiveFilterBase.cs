@@ -14,7 +14,7 @@ namespace SuperSocket.SocketBase.Protocol
         /// <summary>
         /// Gets the buffer segments which can help you parse your request info conviniently.
         /// </summary>
-        protected ArraySegmentList BufferSegmentList
+        protected ArraySegmentList BufferSegments
         {
             get
             {
@@ -25,7 +25,7 @@ namespace SuperSocket.SocketBase.Protocol
         /// <summary>
         /// Initializes a new instance of the <see cref="ReceiveFilterBase&lt;TRequestInfo&gt;"/> class.
         /// </summary>
-        public ReceiveFilterBase()
+        protected ReceiveFilterBase()
         {
             m_BufferSegments = new ArraySegmentList();
         }
@@ -34,7 +34,7 @@ namespace SuperSocket.SocketBase.Protocol
         /// Initializes a new instance of the <see cref="ReceiveFilterBase&lt;TRequestInfo&gt;"/> class.
         /// </summary>
         /// <param name="previousRequestFilter">The previous Receive filter.</param>
-        public ReceiveFilterBase(ReceiveFilterBase<TRequestInfo> previousRequestFilter)
+        protected ReceiveFilterBase(ReceiveFilterBase<TRequestInfo> previousRequestFilter)
         {
             Initialize(previousRequestFilter);
         }
@@ -45,13 +45,12 @@ namespace SuperSocket.SocketBase.Protocol
         /// <param name="previousRequestFilter">The previous Receive filter.</param>
         public void Initialize(ReceiveFilterBase<TRequestInfo> previousRequestFilter)
         {
-            m_BufferSegments = previousRequestFilter.m_BufferSegments;
+            m_BufferSegments = previousRequestFilter.BufferSegments;
         }
 
         #region IReceiveFilter<TRequestInfo> Members
 
-       
-        
+
         /// <summary>
         /// Filters received data of the specific session into request info.
         /// </summary>
@@ -61,7 +60,8 @@ namespace SuperSocket.SocketBase.Protocol
         /// <param name="toBeCopied">if set to <c>true</c> [to be copied].</param>
         /// <param name="rest">The rest, the length of the data which hasn't been parsed.</param>
         /// <returns></returns>
-        public abstract TRequestInfo Filter(byte[] readButter, int offset, int length, bool toBeCopied, out int rest);
+        public abstract TRequestInfo Filter(byte[] readBuffer, int offset, int length, bool toBeCopied, out int rest);
+
 
         /// <summary>
         /// Gets the size of the rest buffer.
@@ -115,9 +115,9 @@ namespace SuperSocket.SocketBase.Protocol
         /// <summary>
         /// Resets this instance to initial state.
         /// </summary>
-        public void Reset()
+        public virtual void Reset()
         {
-            if (m_BufferSegments != null && m_BufferSegments.Count > 0)
+            if(m_BufferSegments != null && m_BufferSegments.Count > 0)
             {
                 m_BufferSegments.ClearSegments();
             }

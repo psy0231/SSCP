@@ -9,7 +9,6 @@ namespace SuperSocket.SocketBase.Protocol
     {
         
     }
-
     /// <summary>
     /// Receive filter factory interface
     /// </summary>
@@ -26,7 +25,6 @@ namespace SuperSocket.SocketBase.Protocol
         /// <returns>
         /// the new created request filer assosiated with this socketSession
         /// </returns>
-        IReceiveFilter<TRequestInfo> CreateFileter(IAppServer appServer, IAppSession appSession,
-            IPEndPoint remoteEndPoint);
+        IReceiveFilter<TRequestInfo> CreateFilter(IAppServer appServer, IAppSession appSession, IPEndPoint remoteEndPoint);
     }
 }

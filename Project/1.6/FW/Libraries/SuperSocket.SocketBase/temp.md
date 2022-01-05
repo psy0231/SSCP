@@ -91,7 +91,6 @@
 - [x] IOffsetAdapter
 
 ---
-
 - UdpRequestInfo
 - RequestInfo
 - BinaryRequestInfo
@@ -99,6 +98,7 @@
 - BasicRequestInfoParser
 - IReceiveFilter
 - ReceiveFilterBase
+- TerminatorReceiveFilter
 
 ## Provider
 - [x] ExportFactory

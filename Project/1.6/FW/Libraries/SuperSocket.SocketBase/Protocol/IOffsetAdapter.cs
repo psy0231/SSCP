@@ -8,7 +8,7 @@
         /// <summary>
         /// Gets the offset delta.
         /// </summary>
-        int OffsetDalta
+        int OffsetDelta
         {
             get;
         }
