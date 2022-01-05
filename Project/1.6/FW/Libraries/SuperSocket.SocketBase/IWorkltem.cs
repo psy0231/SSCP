@@ -1,4 +1,5 @@
 ﻿using SuperSocket.SocketBase.Config;
+using SuperSocket.SocketBase.Provider;
 
 namespace SuperSocket.SocketBase
 {
@@ -51,9 +52,9 @@ namespace SuperSocket.SocketBase
             get;
         }
     }
-    public interface IWorkltem : IWorkItemBase, IStatusInfoSource
+    public interface IWorkItem : IWorkItemBase, IStatusInfoSource
     {
-        bool Setup(IBootstrap bootstrap, IServerConfig config, ProviderFactortInfo[] factories);
+        bool Setup(IBootstrap bootstrap, IServerConfig config, ProviderFactoryInfo[] factories);
 
         ServerState State
         {

@@ -43,14 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppServer.cs" />
     <Compile Include="AppServerBase.ConfigHotUpdate.cs" />
+    <Compile Include="AppServerBase.cs" />
+    <Compile Include="AppSession.cs" />
     <Compile Include="Async.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="CommandExecutingContext.cs" />
     <Compile Include="Command\CommandBase.cs" />
+    <Compile Include="Command\CommandInfo.cs" />
     <Compile Include="Command\CommandUpdateEventArgs.cs" />
     <Compile Include="Command\CommandUpdateInfo.cs" />
     <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\ICommandFilterProvider.cs" />
     <Compile Include="Command\ICommandLoader.cs" />
     <Compile Include="Command\StringCommandBase.cs" />
     <Compile Include="Config\CertificateConfig.cs" />
@@ -74,6 +79,7 @@
     <Compile Include="Config\TypeProvider.cs" />
     <Compile Include="Config\TypeProviderCollection.cs" />
     <Compile Include="Config\TypeProviderConfig.cs" />
+    <Compile Include="IActiveConnector.cs" />
     <Compile Include="IAppServer.cs" />
     <Compile Include="IAppSession.cs" />
     <Compile Include="IBootstrap.cs" />

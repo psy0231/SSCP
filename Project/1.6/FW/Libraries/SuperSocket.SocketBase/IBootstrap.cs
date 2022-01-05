@@ -1,4 +1,8 @@
-﻿using SuperSocket.SocketBase.Config;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using SuperSocket.SocketBase.Config;
+using SuperSocket.SocketBase.Logging;
 
 namespace SuperSocket.SocketBase
 {
@@ -24,9 +28,92 @@ namespace SuperSocket.SocketBase
         /// </summary>
         Failed
     }
+    
+    /// <summary>
+    /// SuperSocket bootstrap
+    /// </summary>
     public interface IBootstrap
     {
-        
+        /// <summary>
+        /// Gets all the app servers running in this bootstrap
+        /// </summary>
+        IEnumerable<IWorkItem> AppServers
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets the config.
+        /// </summary>
+        IRootConfig Config
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Initializes the bootstrap with the configuration
+        /// </summary>
+        /// <returns></returns>
+        bool Initialize();
+
+        /// <summary>
+        /// Initializes the bootstrap with a listen endpoint replacement dictionary
+        /// </summary>
+        /// <param name="listenEndPointReplacement">The listen end point replacement.</param>
+        /// <returns></returns>
+        bool Initialize(IDictionary<string, IPEndPoint> listenEndPointReplacement);
+
+        /// <summary>
+        /// Initializes the bootstrap with the configuration
+        /// </summary>
+        /// <param name="serverConfigResolver">The server config resolver.</param>
+        /// <returns></returns>
+        bool Initialize(Func<IServerConfig, IServerConfig> serverConfigResolver);
+
+        /// <summary>
+        /// Initializes the bootstrap with the configuration
+        /// </summary>
+        /// <param name="logFactory">The log factory.</param>
+        /// <returns></returns>
+        bool Initialize(ILogFactory logFactory);
+
+        /// <summary>
+        /// Initializes the bootstrap with the configuration
+        /// </summary>
+        /// <param name="serverConfigResolver">The server config resolver.</param>
+        /// <param name="logFactory">The log factory.</param>
+        /// <returns></returns>
+        bool Initialize(Func<IServerConfig, IServerConfig> ServerConfigResolver, ILogFactory logFactory);
+
+        /// <summary>
+        /// Starts this bootstrap.
+        /// </summary>
+        /// <returns></returns>
+        StartResult Start();
+
+        /// <summary>
+        /// Stops this bootstrap.
+        /// </summary>
+        void Stop();
+
+        /// <summary>
+        /// Gets the startup config file.
+        /// </summary>
+        string StartupConfigFile
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets the base directory.
+        /// </summary>
+        /// <value>
+        /// The base directory.
+        /// </value>
+        string BaseDirectory
+        {
+            get;
+        }
     }
 
     public interface IDynamicBootstrap

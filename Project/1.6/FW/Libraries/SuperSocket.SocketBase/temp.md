@@ -31,10 +31,13 @@
 - ISocketServerFactory
 - IConnectionFilter
 - CommandExecutingContext
+- IWorkltem
+- IAppServer
+- IActiveConnector(IActiveConnector, ActiveConnectResult)
+- IBootstrap
 
 ## Command
 - [?] ICommand
-- [?] ICommandLoader
 - [x] CommandUpdateAction
     - [x] CommandUpdateInfo
 ---
@@ -42,6 +45,8 @@
 - ICommand(ICommand)
 - MockupCommand(ICommand)
 - CommandBase
+- ICommandFilterProvider
+- ICommandLoader
 
 ## Config
 - [x] ITypeProvider

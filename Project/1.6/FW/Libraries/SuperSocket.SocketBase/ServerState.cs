@@ -8,7 +8,7 @@
         /// <summary>
         /// Not initialized
         /// </summary>
-        NotInitialized = ServerStateConst.NonInitialized,
+        NotInitialized = ServerStateConst.NotInitialized,
        
         /// <summary>
         /// In initializing
@@ -38,7 +38,7 @@
 
     internal class ServerStateConst
     {
-        public const int NonInitialized = 0;
+        public const int NotInitialized = 0;
         
         public const int Initializing = 1;
         
