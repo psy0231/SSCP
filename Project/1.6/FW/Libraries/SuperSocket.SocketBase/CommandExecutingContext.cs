@@ -45,7 +45,7 @@ namespace SuperSocket.SocketBase
         public Exception Exception
         {
             get;
-            private set;
+            internal set;
         }
 
         /// <summary>

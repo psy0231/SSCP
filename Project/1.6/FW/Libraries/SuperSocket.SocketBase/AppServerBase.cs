@@ -21,9 +21,7 @@ using SuperSocket.Common;
 namespace SuperSocket.SocketBase.Security
 {
     [AppServerMetadataType(typeof(DefaultAppServerMetadata))]
-    public abstract partial class AppServerBase<TAppSession, TRequestInfo> : IAppServer<TAppSession, TRequestInfo>, 
-        IRawDataProcessor<TAppSession>, IRequestHandler<TRequestInfo>, ISocketServerAccessor, IStatusInfoSource, 
-        IRemoteCertificateValidator, IActiveConnector, ISystemEndPoint, IDisposable
+    public abstract partial class AppServerBase<TAppSession, TRequestInfo> : IAppServer<TAppSession, TRequestInfo>, IRawDataProcessor<TAppSession>, IRequestHandler<TRequestInfo>, ISocketServerAccessor, IStatusInfoSource, IRemoteCertificateValidator, IActiveConnector, ISystemEndPoint, IDisposable
         where TRequestInfo : class, IRequestInfo
         where TAppSession : AppSession<TAppSession, TRequestInfo>, IAppSession, new()
     {
@@ -60,7 +58,7 @@ namespace SuperSocket.SocketBase.Security
             }
         }
 
-        private List<ICommandLoader<ICommand<IAppSession, TRequestInfo>>> m_CommandLoaders = new List<ICommandLoader<ICommand<IAppSession, TRequestInfo>>>();
+        private List<ICommandLoader<ICommand<TAppSession, TRequestInfo>>> m_CommandLoaders = new List<ICommandLoader<ICommand<TAppSession, TRequestInfo>>>();
 
         private Dictionary<string, CommandInfo<ICommand<TAppSession, TRequestInfo>>> m_CommandContainer;
 
@@ -156,7 +154,7 @@ namespace SuperSocket.SocketBase.Security
             foreach (var loader in m_CommandLoaders)
             {
                 loader.Error += new EventHandler<ErrorEventArgs>(CommandLoaderOnError);
-                loader.Updated += new EventHandler<CommandUpdateEventArgs<ICommand<IAppSession, TRequestInfo>>>(CommandLoaderOnCommandsUpdated);
+                loader.Updated += new EventHandler<CommandUpdateEventArgs<ICommand<TAppSession, TRequestInfo>>>(CommandLoaderOnCommandsUpdated);
 
                 if (!loader.Initialoze(RootConfig, this))
                 {
@@ -363,7 +361,7 @@ namespace SuperSocket.SocketBase.Security
             return SetupCommandLoaders(m_CommandLoaders);
         }
 
-        private bool SetupAdvenced(IServerConfig config)
+        private bool SetupAdvanced(IServerConfig config)
         {
             if (!SetupSecurity(config))
             {
@@ -564,7 +562,7 @@ namespace SuperSocket.SocketBase.Security
                 return false;
             }
 
-            if (!SetupAdvenced(config))
+            if (!SetupAdvanced(config))
             {
                 return false;
             }
@@ -615,75 +613,881 @@ namespace SuperSocket.SocketBase.Security
             TrySetInitializedState();
 
             var rootConfig = bootstrap.Config;
+            
+            SetupBasic(rootConfig, config, GetSingleProviderInstance<ISocketServerFactory>(factories, ProviderKey.SocketServerFactory));
+
+            if (!SetupLogFactory(GetSingleProviderInstance<ILogFactory>(factories, ProviderKey.LogFactory)))
+            {
+                return false;
+            }
+
+            Logger = CreateLogger(this.Name);
+
+            IEnumerable<IConnectionFilter> connectionFilters = null;
+
+            if (!TryGetProviderInstances(factories, ProviderKey.ConnectionFilter, null, (p, f) =>
+                {
+                    var ret = p.Initialize(f.Name, this);
+
+                    if (!ret)
+                    {
+                        Logger.ErrorFormat("Failed to initialize the connection filter: {0}.", f.Name);
+                    }
+
+                    return ret;
+                }, out connectionFilters))
+            {
+                return false;
+            }
+
+            if (!SetupMedium(
+                    GetSingleProviderInstance<IReceiveFilterFactory<TRequestInfo>>(factories, ProviderKey.ReceiveFilterFactory),
+                    connectionFilters, 
+                    GetProviderInstances<ICommandLoader<ICommand<TAppSession, TRequestInfo>>>(
+                        factories, 
+                        ProviderKey.CommandLoader, 
+                        (t)=> Activator.CreateInstance(t.MakeGenericType(typeof(ICommand<TAppSession,TRequestInfo>))))));
+            {
+                return false;
+            }
+
+            if (!SetupAdvanced(config))
+            {
+                return false;
+            }
+
+            if (!Setup(rootConfig, config))
+            {
+                return false;
+            }
+
+            if (!SetupFinal())
+            {
+                return false;
+            }
+
+            m_StateCode = ServerStateConst.NotStarted;
+            return true;
+        }
+
+        private TProvider GetSingleProviderInstance<TProvider>(ProviderFactoryInfo[] factories, ProviderKey key)
+        {
+            var factory = factories.FirstOrDefault(p => p.Key.Name == key.Name);
+
+            if (factory == null)
+            {
+                return default(TProvider);
+            }
+
+            return factory.ExportFactory.CreateExport<TProvider>();
+        }
+
+        private bool TryGetProviderInstances<TProvider>(ProviderFactoryInfo[] factories, ProviderKey key, Func<Type, object> creator, Func<TProvider, ProviderFactoryInfo, bool> initializer, out IEnumerable<TProvider> providers)
+            where TProvider : class
+        {
+            IEnumerable<ProviderFactoryInfo> selectedFactories = factories.Where(p => p.Key.Name == key.Name);
+
+            if (!selectedFactories.Any())
+            {
+                providers = null;
+                return true;
+            }
+
+            providers = new List<TProvider>();
+
+            var list = (List<TProvider>)providers;
+
+            foreach (var f in selectedFactories)
+            {
+                var provider = creator == null ? f.ExportFactory.CreateExport<TProvider>() : f.ExportFactory.CreateExport<TProvider>(creator);
+
+                if (!initializer(provider, f))
+                {
+                    return false;
+                }
+                
+                list.Add(provider);
+            }
+
+            return true;
+        }
+
+        private IEnumerable<TProvider> GetProviderInstances<TProvider>(ProviderFactoryInfo[] factories, ProviderKey key)
+            where TProvider : class
+        {
+            return GetProviderInstances<TProvider>(factories, key, null);
+        }
+
+        private IEnumerable<TProvider> GetProviderInstances<TProvider>(ProviderFactoryInfo[] factories, ProviderKey key, Func<Type, object> creator)
+            where TProvider : class
+        {
+            IEnumerable<TProvider> providers;
+            TryGetProviderInstances<TProvider>(factories, key, creator, (p, f) => true, out providers);
+            return providers;
+        }
+
+        private bool SetupLogFactory(ILogFactory logFactory)
+        {
+            if (logFactory !=null)
+            {
+                LogFactory = logFactory;
+                return true;
+            }
+
+            if (LogFactory == null)
+            {
+                LogFactory = new Log4NetLogFactory();
+            }
+
+            return true;
+        }
+
+        protected virtual bool SetupCommandLoaders(List<ICommandLoader<ICommand<TAppSession, TRequestInfo>>> commandLoaders)
+        {
+            commandLoaders.Add(new ReflectCommandLoader<ICommand<TAppSession, TRequestInfo>>());
+            return true;
+        }
+
+        protected virtual ILog CreateLogger(string loggerName)
+        {
+            return LogFactory.GetLog(loggerName);
+        }
+
+        private bool SetupSecurity(IServerConfig config)
+        {
+            if (!string.IsNullOrEmpty(config.Security))
+            {
+                SslProtocols configProtocol;
+                if (!config.Security.TryParseEnum<SslProtocols>(true, out configProtocol))
+                {
+                    if (Logger.IsErrorEnabled)
+                    {
+                        Logger.ErrorFormat("Failed to parse '{0}' to SslProtocol!", config.Security);
+                    }
+
+                    return false;
+                }
+
+                BasicSecurity = configProtocol;
+            }
+            else
+            {
+                BasicSecurity = SslProtocols.None;
+            }
+
+            try
+            {
+                var certificate = GetCertificate(config.Certificate);
+
+                if (certificate != null)
+                {
+                    Certificate = certificate;
+                }
+                else if (BasicSecurity != SslProtocols.None)
+                {
+                    if (Logger.IsErrorEnabled)
+                    {
+                        Logger.Error("Certificate is required in this security mode!");
+                    }
+
+                    return false;
+                }
+                
+            }
+            catch (Exception e)
+            {
+                if (Logger.IsErrorEnabled)
+                {
+                    Logger.Error("Failed to initialize certificate!", e);
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        protected virtual X509Certificate GetCertificate(ICertificateConfig certificate)
+        {
+            if (certificate == null)
+            {
+                if (BasicSecurity != SslProtocols.None && Logger.IsErrorEnabled)
+                {
+                    Logger.Error("There is no certificate configured!");
+                }
+
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(certificate.FilePath) && string.IsNullOrEmpty(certificate.Thumbprint))
+            {
+                if (BasicSecurity != SslProtocols.None && Logger.IsErrorEnabled)
+                {
+                    Logger.Error("You should define certificate node and either attribute 'filePath' or 'thumbprint' is required!");
+                }
+
+                return null;
+            }
+
+            return CertificateManager.Initialize(certificate, GetFilePath);
+        }
+
+        bool IRemoteCertificateValidator.Validate(IAppSession session, object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return ValidateClientCertificate((TAppSession)session, sender, certificate, chain, sslPolicyErrors);
+        }
+
+        protected virtual bool ValidateClientCertificate(TAppSession session, object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return sslPolicyErrors == SslPolicyErrors.None;
+        }
+
+        private bool SetupSocketServer()
+        {
+            try
+            {
+                m_SocketServer = m_SocketServerFactory.CreateSocketServer<TRequestInfo>(this, m_Listeners, Config);
+                return m_SocketServer != null;
+            }
+            catch (Exception e)
+            {
+                if (Logger.IsErrorEnabled)
+                {
+                    Logger.Error(e);
+                }
+
+                return false;
+            }
+        }
+
+        private IPAddress ParseIPAddress(string ip)
+        {
+            if (string.IsNullOrEmpty(ip) || "Any".Equals(ip, StringComparison.OrdinalIgnoreCase))
+            {
+                return IPAddress.Any;
+            }
+            else if ("IPv6Any".Equals(ip, StringComparison.OrdinalIgnoreCase))
+            {
+                return IPAddress.IPv6Any;
+            }
+            else
+            {
+                return IPAddress.Parse(ip);
+            }
+        }
+
+        private bool SetupListeners(IServerConfig config)
+        {
+            var listeners = new List<ListenerInfo>();
+
+            try
+            {
+                if (config.Port>0)
+                {
+                    listeners.Add(new ListenerInfo
+                    {
+                        EndPoint = new IPEndPoint(ParseIPAddress(config.Ip), config.Port),
+                        BackLog = config.ListenBacklog,
+                        Security = BasicSecurity
+                    });
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(config.Ip))
+                    {
+                        if (Logger.IsErrorEnabled)
+                        {
+                            Logger.Error("Port is required in config");
+                        }
+
+                        return false;
+                    }
+                }
+
+                if (config.Listeners != null && config.Listeners.Any())
+                {
+                    if (listeners.Any())
+                    {
+                        if (Logger.IsErrorEnabled)
+                        {
+                            Logger.Error("If you configured Ip and Port in server node, you cannot defined listener in listeners node any more!");
+                        }
+
+                        return false;
+                    }
+
+                    foreach (var l in config.Listeners)
+                    {
+                        SslProtocols configProtocol;
+
+                        if (string.IsNullOrEmpty(l.Security))
+                        {
+                            configProtocol = BasicSecurity;
+                        }else if (!l.Security.TryParseEnum<SslProtocols>(true, out configProtocol))
+                        {
+                            if (Logger.IsErrorEnabled)
+                            {
+                                Logger.ErrorFormat("Failed to parse '{0}' to SslProtocol!", config.Security);
+                            }
+
+                            return false;
+                        }
+
+                        if (configProtocol != SslProtocols.None && (Certificate == null))
+                        {
+                            if (Logger.IsErrorEnabled)
+                            {
+                                Logger.Error("Threr if no Certificate loaded, but there is a secure listener defined!");
+                            }
+
+                            return false;
+                        }
+                        
+                        listeners.Add(new ListenerInfo
+                        {
+                            EndPoint = new IPEndPoint(ParseIPAddress(l.Ip), l.Port),
+                            BackLog = l.Backlog,
+                            Security = configProtocol
+                        });
+                    }
+                }
+
+                if (!listeners.Any())
+                {
+                    if (Logger.IsErrorEnabled)
+                    {
+                        Logger.Error("No listener defined!");
+                    }
+
+                    return false;
+                }
+
+                m_Listeners = listeners.ToArray();
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                if (Logger.IsErrorEnabled)
+                {
+                    Logger.Error(e);
+                }
+
+                return false;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return m_Name;
+            }
+        }
+
+        private ISocketServer m_SocketServer;
+
+        ISocketServer ISocketServerAccessor.SocketServer
+        {
+            get
+            {
+                return m_SocketServer;
+            }
+        }
+
+        public virtual bool Start()
+        {
+            var origStateCode = Interlocked.CompareExchange(ref m_StateCode, ServerStateConst.Starting, ServerStateConst.NotStarted);
+
+            
+            if (origStateCode != ServerStateConst.NotStarted)
+            {
+                if (origStateCode != ServerStateConst.NotStarted)
+                {
+                    throw new Exception("You cannot start a server instance which has not been setup yet.");
+                }
+                
+                if (Logger.IsErrorEnabled)
+                {
+                    Logger.ErrorFormat("This server instance is in the state {0}, you cannot start it now.", (ServerState)origStateCode);
+                }
+                
+                return false;
+            }
+
+            if (!m_SocketServer.Start())
+            {
+                m_StateCode = ServerStateConst.NotStarted;
+                return false;
+            }
+            
+            StartedTime = DateTime.Now;
+            m_StateCode = ServerStateConst.Running;
+
+            m_ServerStatus[StatusInfoKeys.IsRunning] = true;
+            m_ServerStatus[StatusInfoKeys.StartedTime] = StartedTime;
+
+            try
+            {
+                #pragma warning disable 0612,618
+                OnStartup();
+                #pragma warning restore 0612,618
+
+                OnStarted();
+            }
+            catch (Exception e)
+            {
+                if (Logger.IsErrorEnabled)
+                {
+                    Logger.Error("One exception wa thrown in the method 'OnStartup()'.",e);
+                }
+            }
+            finally
+            {
+                if (Logger.IsFatalEnabled)
+                {
+                    Logger.Info(string.Format("The server instance {0} has been started!",Name));
+                }
+            }
+
+            return true;
+        }
+
+        [Obsolete("Use OnStarted() insted")]
+        protected virtual void OnStartup()
+        {
+            
+        }
+
+        protected virtual void OnStarted()
+        {
+            
+        }
+        
+        protected virtual void OnStopped()
+        {
+
+        }
+        public virtual void Stop()
+        {
+            if (Interlocked.CompareExchange(ref m_StateCode, ServerStateConst.Stopping, ServerStateConst.Running)
+                != ServerStateConst.Running)
+            {
+                return;
+            }
+
+            m_SocketServer.Stop();
+
+            m_StateCode = ServerStateConst.NotStarted;
+
+            OnStopped();
+
+            m_ServerStatus[StatusInfoKeys.IsRunning] = false;
+            m_ServerStatus[StatusInfoKeys.StartedTime] = null;
+
+            if (Logger.IsInfoEnabled)
+            {
+                Logger.Info(string.Format("The server instance {0} has been stopped!", Name));
+            }
+        }
+
+        private CommandInfo<ICommand<TAppSession, TRequestInfo>> GetCommandByName(string commandName)
+        {
+            CommandInfo<ICommand<TAppSession, TRequestInfo>> commandProxy;
+
+            if (m_CommandContainer.TryGetValue(commandName, out commandProxy))
+            {
+                return commandProxy;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private Func<TAppSession, byte[], int, int, bool> m_RawDataReceivedHandler;
+        
+        event Func<TAppSession, byte[], int, int, bool> IRawDataProcessor<TAppSession>.RawDataReceived
+        {
+            add
+            {
+                m_RawDataReceivedHandler += value;
+            }
+
+            remove
+            {
+                m_RawDataReceivedHandler -= value;
+            }
+        }
+
+        internal bool OnRawDataReceived(IAppSession session, byte[] buffer, int offset, int length)
+        {
+            var handler = m_RawDataReceivedHandler;
+            if (handler == null)
+            {
+                return true;
+            }
+
+            return handler((TAppSession)session, buffer, offset, length);
+        }
+
+        private RequestHandler<TAppSession, TRequestInfo> m_RequestHandler;
+        
+        public virtual event RequestHandler<TAppSession, TRequestInfo> NewRequestReceived
+        {
+            add
+            {
+                m_RequestHandler += value;
+            }
+            remove
+            {
+                m_RequestHandler -= value;
+            }
+        }
+
+        protected virtual void ExecuteCommand(TAppSession session, TRequestInfo requestInfo)
+        {
+            if (m_RequestHandler == null)
+            {
+                var commandProxy = GetCommandByName(requestInfo.Key);
+
+                if (commandProxy != null)
+                {
+                    var command = commandProxy.Command;
+                    var commandFilters = commandProxy.Filters;
+
+                    session.CurrentCommand = requestInfo.Key;
+
+                    var cancelled = false;
+
+                    if (commandFilters == null)
+                    {
+                        command.ExcuteCommand(session, requestInfo);
+                    }
+                    else
+                    {
+                        var commandContext = new CommandExecutingContext();
+                        commandContext.Initialize(session, requestInfo, command);
+
+                        for (int i = 0; i < commandFilters.Length; i++)
+                        {
+                            var filter = commandFilters[i];
+                            filter.OnCommandExecuting(commandContext);
+
+                            if (commandContext.Cancel)
+                            {
+                                cancelled = true;
+                                if (Logger.IsInfoEnabled)
+                                {
+                                    Logger.Info(session, string.Format("The excuting of the command {0} was cancelled by the command filter {1}.", command.Name, filter.GetType().ToString()));
+                                }
+
+                                break;
+                            }
+                        }
+
+                        if (!cancelled)
+                        {
+                            try
+                            {
+                                command.ExcuteCommand(session, requestInfo);
+                            }
+                            catch (Exception exc)
+                            {
+                                commandContext.Exception = exc;
+                            }
+
+                            for (int i = 0; i < commandFilters.Length; i++)
+                            {
+                                var filter = commandFilters[i];
+                                filter.OnCommandExecuted(commandContext);
+                            }
+
+                            if (commandContext.Exception != null && !commandContext.ExceptionHandled)
+                            {
+                                try
+                                {
+                                    session.InternalHandleException(commandContext.Exception);
+                                }
+                                catch 
+                                {
+                                    
+                                }
+                            }
+                        }
+                    }
+
+                    if (!cancelled)
+                    {
+                        session.PrevCommand = requestInfo.Key;
+
+                        if (Config.LogCommand && Logger.IsInfoEnabled)
+                        {
+                            Logger.Info(session, string.Format("Command - {0}", requestInfo.Key));
+                        }
+                    }
+                }
+                else
+                {
+                    session.InternalHandleUnknownRequest(requestInfo);
+                }
+                
+                session.LastActiveTime = DateTime.Now;
+            }
+            else
+            {
+                session.CurrentCommand = requestInfo.Key;
+
+                try
+                {
+                    m_RequestHandler(session, requestInfo);
+                }
+                catch (Exception e)
+                {
+                    session.InternalHandleException(e);
+                }
+
+                session.PrevCommand = requestInfo.Key;
+                session.LastActiveTime = DateTime.Now;
+
+                if (Config.LogCommand && Logger.IsInfoEnabled)
+                {
+                    Logger.Info(session, string.Format("Command - {0}", requestInfo.Key));
+                }
+            }
+
+            Interlocked.Increment(ref m_TotalHandledRequests);
+        }
+
+        internal void ExecuteCommand(IAppSession session, TRequestInfo requestInfo)
+        {
+            this.ExecuteCommand((TAppSession)session, requestInfo);
+        }
+
+        void IRequestHandler<TRequestInfo>.ExecuteCommand(IAppSession session, TRequestInfo requestInfo)
+        {
+            this.ExecuteCommand((TAppSession)session, requestInfo);
+        }
+
+        public IEnumerable<IConnectionFilter> ConnectionFilters
+        {
+            get
+            {
+                return m_ConnectionFilters;
+            }
+        }
+
+        private bool ExecuteConnectionFilters(IPEndPoint remoteAddress)
+        {
+            if (m_ConnectionFilters == null)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < m_ConnectionFilters.Count; i++)
+            {
+                var currentFilter = m_ConnectionFilters[i];
+                if (!currentFilter.AllowConnect(remoteAddress))
+                {
+                    if (Logger.IsInfoEnabled)
+                    {
+                        Logger.InfoFormat("A connection from {0} has been refused by filter {1}!", remoteAddress, currentFilter.Name);
+                    }
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        IAppSession IAppServer.CreateAppSession(ISocketSession socketSession)
+        {
+            if (!ExecuteConnectionFilters(socketSession.RemoteEndPoint))
+            {
+                return NullAppSession;
+            }
+
+            var appSession = CreateAppSession(socketSession);
+
+            appSession.Initialize(this, socketSession);
+
+            return appSession;
+        }
+        
+        public virtual TAppSession CreateAppSession(ISocketSession socketSession)
+        {
+            return new TAppSession();
+        }
+
+        bool IAppServer.RegisterSession(IAppSession session)
+        {
+            var appSession = session as TAppSession;
+
+            if (!RegisterSession(appSession.SessionID, appSession))
+            {
+                return false;
+            }
+
+            appSession.SocketSession.Closed += OnSocketSessionClosed;
+
+            if (Config.LogBasicSessionActivity &&  Logger.IsInfoEnabled)
+            {
+                Logger.Info(session, "A new session connected!");
+            }
+
+            OnNewSessionConnected(appSession);
+            return true;
+        }
+
+        protected virtual bool RegisterSession(string sessionID, TAppSession appSession)
+        {
+            return true;
+        }
+
+        private SessionHandler<TAppSession> m_NewSessionConnected;
+        
+        public event SessionHandler<TAppSession> NewSessionConnected
+        {
+            add
+            {
+                m_NewSessionConnected += value;
+            }
+            remove
+            {
+                m_NewSessionConnected -= value;
+            }
+        }
+
+        protected virtual void OnNewSessionConnected(TAppSession session)
+        {
+            var handler = m_NewSessionConnected;
+            if (handler == null)
+            {
+                return;
+            }
+
+            handler.BeginInvoke(session, OnNewSessionConnectedCallback, handler);
+        }
+
+        private void OnNewSessionConnectedCallback(IAsyncResult result)
+        {
+            try
+            {
+                var handler = (SessionHandler<TAppSession>)result.AsyncState;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        }
+
+        public void ResetSessionSecurity(IAppSession session, SslProtocols security)
+        {
+            m_SocketServer.ResetSessionSecurity(session, security);
+        }
+
+        private void OnSocketSessionClosed(ISocketSession session, CloseReason reason)
+        {
+            if (Logger.IsInfoEnabled && (Config.LogBasicSessionActivity || (reason != CloseReason.ServerClosing && reason != CloseReason.ClientClosing && reason != CloseReason.ServerShutdown && reason != CloseReason.SocketError)))
+            {
+                Logger.Info(session, string.Format("This session was closed for {0}!", reason));
+            }
+
+            var appSession = session.AppSession as TAppSession;
+            appSession.Connected = false;
+            OnSessionClosed(appSession, reason);
+        }
+
+        private SessionHandler<TAppSession, CloseReason> m_SessionClosed;
+        
+        public event SessionHandler<TAppSession, CloseReason> SessionClosed
+        {
+            add
+            {
+                m_SessionClosed += value;
+            }
+            remove
+            {
+                m_SessionClosed -= value;
+            }
+        }
+
+        protected virtual void OnSessionClosed(TAppSession session, CloseReason reason)
+        {
+            var handler = m_SessionClosed;
+
+            if (handler != null)
+            {
+                handler.BeginInvoke(session, reason, OnSessionClosedCallback, handler);
+            }
+
+            session.OnSessionClosed(reason);
+        }
+
+        private void OnSessionClosedCallback(IAsyncResult result)
+        {
+            try
+            {
+                var handler = (SessionHandler<TAppSession, CloseReason>)result.AsyncState;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        }
+        
+        public abstract TAppSession GetSessionByID(string sessionID);
+
+        IAppSession IAppServer.GetSessionByID(string sessionID)
+        {
+            return this.GetSessionByID(sessionID);
+        }
+        
+        public virtual IEnumerable<TAppSession> GetSessions(Func<TAppSession, bool> critera)
+        {
+            throw new NotSupportedException();
+        }
+        
+        public virtual IEnumerable<TAppSession> GetAllSessions()
+        {
+            throw new NotSupportedException();
+        }
+
+        public abstract int SessionCount
+        {
+            get;
+        }
+
+        public string GetFilePath(string relativeFilePath)
+        {
+            var filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativeFilePath);
+
+            if (!System.IO.File.Exists(filePath) && RootConfig != null && RootConfig.Isolation != IsolationMode.None)
+            {
+                var rootDir = System.IO.Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName;
+                var rootFilePath = System.IO.Path.Combine(rootDir, relativeFilePath);
+
+                if (System.IO.File.Exists(rootFilePath))
+                {
+                    return rootFilePath;
+                }
+            }
+
+            return filePath;
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-
-        public bool Start()
-        {
-            throw new NotImplementedException();
-        }
-        
 
         public void TransferSystemMessage(string messageType, object messageData)
         {
             throw new NotImplementedException();
         }
 
-        public string Name { get; }
-
-
         public void ReportPotentialConfigChange(IServerConfig config)
         {
             throw new NotImplementedException();
         }
 
-        public void Stop()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int SessionCount { get; }
-
-
-        public IAppSession CreateAppSession(ISocketSession socketSession)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool RegisterSession(IAppSession session)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IAppSession GetSessionByID(string sessionID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ResetSessionSecurity(IAppSession session, SslProtocols security)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<TAppSession> GetSessions(Func<TAppSession, bool> critera)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<TAppSession> GetAllSessions()
-        {
-            throw new NotImplementedException();
-        }
-
-        public event SessionHandler<TAppSession> NewSessionConnected;
-        public event SessionHandler<TAppSession, CloseReason> SessionClosed;
-        public event RequestHandler<TAppSession, TRequestInfo> NewRequestReceived;
         public event Func<TAppSession, byte[], int, int, bool> RawDataReceived;
-        public void ExecuteCommand(IAppSession session, TRequestInfo requestInfo)
-        {
-            throw new NotImplementedException();
-        }
 
         public ISocketServer SocketServer { get; }
 
@@ -771,8 +1575,8 @@ namespace SuperSocket.SocketBase.Security
             if (State == ServerState.Running)
             {
                 var sendingQueuePool = m_SocketServer.SendingQueuePool;
-                serverStatus[StatusInfoKeys.AvailableSendingQueueItems] = sendingQueuePool.AvailableItemCount;
-                serverStatus[StatusInfoKeys.TotalSendingQueueItems] = sendingQueuePool.TotalItemCount;
+                serverStatus[StatusInfoKeys.AvailableSendingQueueItems] = sendingQueuePool.AvialableItemsCount;
+                serverStatus[StatusInfoKeys.TotalSendingQueueItems] = sendingQueuePool.TotalItemsCount;
             }
             else
             {

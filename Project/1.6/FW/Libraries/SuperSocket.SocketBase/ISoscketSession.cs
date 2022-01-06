@@ -118,7 +118,7 @@ namespace SuperSocket.SocketBase
         /// <value>
         /// The secure protocol.
         /// </value>
-        SslProtocols SecureProtocols
+        SslProtocols SecureProtocol
         {
             get;
             set;

@@ -59,6 +59,7 @@
     <Compile Include="SearchMarkState.cs" />
     <Compile Include="SocketEx.cs" />
     <Compile Include="StringExtension.cs" />
+    <Compile Include="StringExtension.NET4.cs" />
     <Compile Include="ThreadPoolEx.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

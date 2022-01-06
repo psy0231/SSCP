@@ -94,6 +94,7 @@
     <Compile Include="ISystemEndPoint.cs" />
     <Compile Include="IWorkltem.cs" />
     <Compile Include="ListenerInfo.cs" />
+    <Compile Include="LoggerExtension.cs" />
     <Compile Include="Logging\ConsoleLog.cs" />
     <Compile Include="Logging\ConsoleLogFactory.cs" />
     <Compile Include="Logging\ILog.cs" />
