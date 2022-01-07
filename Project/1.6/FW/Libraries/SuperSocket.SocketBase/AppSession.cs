@@ -224,7 +224,7 @@ namespace SuperSocket.SocketBase
         {
             var castedAppServer = (AppServerBase<TAppSession, TRequestInfo>)appServer;
             AppServer = castedAppServer;
-            Charset = castedAppServer.TextEncodig;
+            Charset = castedAppServer.TextEncoding;
             SocketSession = socketSession;
             SessionID = socketSession.SessionID;
             m_Connected = true;

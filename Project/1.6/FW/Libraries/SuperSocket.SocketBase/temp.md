@@ -38,6 +38,10 @@
 - ISocketServer
 - LoggerExtension
 - AppSession
+- Extensions
+- AppServerBase.NET45
+- AppServerBase.ConfigHotUpdate
+- AppServerBase
 
 ## Command
 - [?] ICommand
@@ -50,6 +54,8 @@
 - CommandBase
 - ICommandFilterProvider
 - ICommandLoader
+- CommandLoaderBase
+- ReflectCommandLoader
 
 ## Config
 - [x] ITypeProvider

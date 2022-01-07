@@ -51,6 +51,6 @@ namespace SuperSocket.SocketBase.Security
         /// <param name="targetEndPoint">The target end point.</param>
         /// <param name="localEndPoint">The local end point.</param>
         /// <returns></returns>
-        Task<ActiveConnectResult> ActiceConnect(EndPoint targetEndPoint, EndPoint localEndPoint);
+        Task<ActiveConnectResult> ActiveConnect(EndPoint targetEndPoint, EndPoint localEndPoint);
     }
 }

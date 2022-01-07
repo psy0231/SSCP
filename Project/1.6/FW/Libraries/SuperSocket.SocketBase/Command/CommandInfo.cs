@@ -30,8 +30,8 @@ namespace SuperSocket.SocketBase.Command
                 allFilters.AddRange(globalFilters);
             }
 
-            IEnumerable<CommandFilterAttribute> filters = command is ICommandFilterProvider
-                ? (command as ICommandFilterProvider).GetFilters() : AppServer.GetCommandFilterAttributes(command.GetType());
+            IEnumerable<CommandFilterAttribute> filters = command is ICommandFilterProvider ? 
+                (command as ICommandFilterProvider).GetFilters() : AppServer.GetCommandFilterAttributes(command.GetType());
 
             if (filters != null && filters.Any())
             {

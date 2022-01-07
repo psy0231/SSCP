@@ -25,7 +25,7 @@ namespace SuperSocket.SocketBase.Command
         /// <param name="rootConfig">The root config.</param>
         /// <param name="appServer">The app server.</param>
         /// <returns></returns>
-        bool Initialoze(IRootConfig rootConfig, IAppServer appServer);
+        bool Initialize(IRootConfig rootConfig, IAppServer appServer);
 
         /// <summary>
         /// Tries to load commands.
