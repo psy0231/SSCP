@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
+using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Protocol;
 
 namespace SuperSocket.SocketBase
@@ -153,10 +153,20 @@ namespace SuperSocket.SocketBase
         void StartSession();
     }
 
+    /// <summary>
+    /// The interface for appSession
+    /// </summary>
+    /// <typeparam name="TAppSession">The type of the app session.</typeparam>
+    /// <typeparam name="TRequestInfo">The type of the request info.</typeparam>
     public interface IAppSession<TAppSession, TRequestInfo> : IAppSession
         where TRequestInfo : IRequestInfo
         where TAppSession : IAppSession, IAppSession<TAppSession, TRequestInfo>, new()
     {
+        /// <summary>
+        /// Initializes the specified session.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="socketSession">The socket session.</param>
         void Initialize(IAppServer<TAppSession, TRequestInfo> server, ISocketSession socketSession);
     }
 }

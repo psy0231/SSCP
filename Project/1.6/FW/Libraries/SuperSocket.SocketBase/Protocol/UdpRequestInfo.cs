@@ -5,7 +5,6 @@
     /// </summary>
     public class UdpRequestInfo : IRequestInfo
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="UdpRequestInfo"/> class.
         /// </summary>

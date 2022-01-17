@@ -15,6 +15,6 @@
     /// <typeparam name="TParam">the target session</typeparam>
     /// <param name="session">the target session</param>
     /// <param name="value">the event parameter</param>
-    public delegate void SessionHandler<TAppSession, TPram>(TAppSession session, TPram value)
+    public delegate void SessionHandler<TAppSession, TParam>(TAppSession session, TParam value)
         where TAppSession : IAppSession;
 }

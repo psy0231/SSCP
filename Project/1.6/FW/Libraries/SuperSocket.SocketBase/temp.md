@@ -42,7 +42,7 @@
 - AppServerBase.NET45
 - AppServerBase.ConfigHotUpdate
 - AppServerBase
-
+- AppServer
 ## Command
 - [?] ICommand
 - [x] CommandUpdateAction

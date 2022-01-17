@@ -28,6 +28,7 @@ namespace SuperSocket.SocketBase.Config
         /// </summary>
         int MinCompletionPortThreads { get; }
 
+
         /// <summary>
         /// Gets a value indicating whether [disable performance data collector].
         /// </summary>
@@ -41,6 +42,7 @@ namespace SuperSocket.SocketBase.Config
         /// </summary>
         int PerformanceDataCollectInterval { get; }
 
+
         /// <summary>
         /// Gets the log factory name.
         /// </summary>
@@ -49,10 +51,12 @@ namespace SuperSocket.SocketBase.Config
         /// </value>
         string LogFactory { get; }
 
+
         /// <summary>
         /// Gets the isolation mode.
         /// </summary>
         IsolationMode Isolation { get; }
+
 
         /// <summary>
         /// Gets the option elements.

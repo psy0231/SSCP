@@ -66,6 +66,7 @@ namespace SuperSocket.SocketBase
         /// <returns></returns>
         IAppSession CreateAppSession(ISocketSession socketSession);
 
+
         /// <summary>
         /// Registers the new created app session into the appserver's session container.
         /// </summary>

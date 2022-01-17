@@ -4,7 +4,7 @@ using SuperSocket.SocketBase.Metadata;
 
 namespace SuperSocket.SocketBase.Command
 {
-    public class CommandInfo<TCommand>
+    class CommandInfo<TCommand>
         where TCommand : ICommand 
     {
         public TCommand Command

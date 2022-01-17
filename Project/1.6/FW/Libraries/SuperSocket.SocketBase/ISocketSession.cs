@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Sockets;
 using System.Security.Authentication;
+using System.Net.Sockets;
 
 namespace SuperSocket.SocketBase
 {
@@ -15,12 +15,12 @@ namespace SuperSocket.SocketBase
         /// The socket is closed for unknown reason
         /// </summary>
         Unknown = 0,
-       
+
         /// <summary>
         /// Close for server shutdown
         /// </summary>
         ServerShutdown = 1,
-     
+
         /// <summary>
         /// The client close the socket
         /// </summary>
@@ -30,22 +30,22 @@ namespace SuperSocket.SocketBase
         /// The server side close the socket
         /// </summary>
         ServerClosing = 3,
-     
+
         /// <summary>
         /// Application error
         /// </summary>
         ApplicationError = 4,
-     
+
         /// <summary>
         /// The socket is closed for a socket error
         /// </summary>
         SocketError = 5,
-     
+
         /// <summary>
         /// The socket is closed by server for timeout
         /// </summary>
         TimeOut = 6,
-       
+
         /// <summary>
         /// Protocol error 
         /// </summary>
@@ -78,6 +78,7 @@ namespace SuperSocket.SocketBase
         /// </summary>
         /// <param name="reason">The reason.</param>
         void Close(CloseReason reason);
+
 
         /// <summary>
         /// Tries to send array segment.

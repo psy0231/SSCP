@@ -18,6 +18,6 @@ namespace SuperSocket.SocketBase
         /// </summary>
         /// <param name="bootstrapStatus">The bootstrap status.</param>
         /// <returns></returns>
-        StatusInfoCollection CollectServerStatus(StatusInfoCollection bootstrapstatus);
+        StatusInfoCollection CollectServerStatus(StatusInfoCollection bootstrapStatus);
     }
 }

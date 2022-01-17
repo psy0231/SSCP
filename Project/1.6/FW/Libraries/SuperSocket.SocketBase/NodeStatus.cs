@@ -55,11 +55,11 @@ namespace SuperSocket.SocketBase
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <returns></returns>
-        public static NodeStatus LoadFron(string filePath)
+        public static NodeStatus LoadFrom(string filePath)
         {
             var serializer = new BinaryFormatter();
 
-            using (var stream = File.Open(filePath, FileMode.Open,FileAccess.Read))
+            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
             {
                 var status = serializer.Deserialize(stream) as NodeStatus;
                 stream.Close();

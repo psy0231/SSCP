@@ -26,6 +26,5 @@ namespace SuperSocket.SocketBase.Command
         {
             Commands = commands;
         }
-
     }
 }

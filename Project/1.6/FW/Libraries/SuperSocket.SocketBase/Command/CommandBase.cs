@@ -12,7 +12,8 @@ namespace SuperSocket.SocketBase.Command
         where TAppSession : IAppSession, IAppSession<TAppSession, TRequestInfo>, new()
         where TRequestInfo : IRequestInfo
     {
-        #region ICommand<TAppSession, TRequestInfo> Memnbers
+
+        #region ICommand<TAppSession,TRequestInfo> Members
 
         /// <summary>
         /// Executes the command.
@@ -29,7 +30,7 @@ namespace SuperSocket.SocketBase.Command
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public string Name
+        public virtual string Name
         {
             get
             {

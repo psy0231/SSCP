@@ -3,7 +3,6 @@ using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketBase.Protocol;
 
-
 namespace SuperSocket.SocketBase.Provider
 {
     /// <summary>

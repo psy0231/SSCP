@@ -214,7 +214,8 @@ namespace SuperSocket.SocketBase
             this.StartTime = DateTime.Now;
             this.LastActiveTime = this.StartTime;
         }
-        
+
+
         /// <summary>
         /// Initializes the specified app session by AppServer and SocketSession.
         /// </summary>
@@ -228,8 +229,7 @@ namespace SuperSocket.SocketBase
             SocketSession = socketSession;
             SessionID = socketSession.SessionID;
             m_Connected = true;
-            m_ReceiveFilter =
-                castedAppServer.ReceiveFilterFactory.CreateFilter(appServer, this, socketSession.RemoteEndPoint);
+            m_ReceiveFilter = castedAppServer.ReceiveFilterFactory.CreateFilter(appServer, this, socketSession.RemoteEndPoint);
 
             var filterInitializer = m_ReceiveFilter as IReceiveFilterInitializer;
             if (filterInitializer != null)
@@ -282,7 +282,7 @@ namespace SuperSocket.SocketBase
         /// <param name="e">The exception.</param>
         protected virtual void HandleException(Exception e)
         {
-            Logger.Error(this,e);
+            Logger.Error(this, e);
             this.Close(CloseReason.ApplicationError);
         }
 
@@ -304,8 +304,7 @@ namespace SuperSocket.SocketBase
         {
             HandleException(e);
         }
-        
-        
+
         /// <summary>
         /// Closes the session by the specified reason.
         /// </summary>
@@ -314,6 +313,7 @@ namespace SuperSocket.SocketBase
         {
             this.SocketSession.Close(reason);
         }
+
         /// <summary>
         /// Closes this session.
         /// </summary>
@@ -649,6 +649,7 @@ namespace SuperSocket.SocketBase
     public abstract class AppSession<TAppSession> : AppSession<TAppSession, StringRequestInfo>
         where TAppSession : AppSession<TAppSession, StringRequestInfo>, IAppSession, new()
     {
+
         private bool m_AppendNewLineForResponse = false;
 
         private static string m_NewLine = "\r\n";
@@ -697,7 +698,7 @@ namespace SuperSocket.SocketBase
                 return rawMessage;
             }
 
-            if (string.IsNullOrEmpty(rawMessage) || ! rawMessage.EndsWith(m_NewLine))
+            if (string.IsNullOrEmpty(rawMessage) || !rawMessage.EndsWith(m_NewLine))
             {
                 return rawMessage + m_NewLine;
             }

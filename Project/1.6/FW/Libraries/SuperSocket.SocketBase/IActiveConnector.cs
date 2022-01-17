@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 
-namespace SuperSocket.SocketBase.Security
+namespace SuperSocket.SocketBase
 {
     /// <summary>
     /// Active connect result model

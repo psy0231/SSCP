@@ -11,7 +11,7 @@ namespace SuperSocket.SocketBase
     public class StatusInfoCollection
     {
         [NonSerialized]
-        private Dictionary<string, object> m_Value = new Dictionary<string, object>();
+        private Dictionary<string, object> m_Values = new Dictionary<string, object>();
         
         
         /// <summary>
@@ -20,11 +20,11 @@ namespace SuperSocket.SocketBase
         /// <value>
         /// The values.
         /// </value>
-        public Dictionary<string, object> Values
+        public Dictionary<string, object> Valueses
         {
             get
             {
-                return m_Value;
+                return m_Values;
             }
         }
 
@@ -79,7 +79,7 @@ namespace SuperSocket.SocketBase
             {
                 object value;
 
-                if (m_Value.TryGetValue(name, out value))
+                if (m_Values.TryGetValue(name, out value))
                 {
                     return value;
                 }
@@ -88,7 +88,7 @@ namespace SuperSocket.SocketBase
             }
             set
             {
-                m_Value[name] = value;
+                m_Values[name] = value;
             }
         }
 
@@ -104,7 +104,7 @@ namespace SuperSocket.SocketBase
         {
             object value;
 
-            if (m_Value.TryGetValue(name, out value))
+            if (m_Values.TryGetValue(name, out value))
             {
                 return (T)value;
             }
@@ -117,9 +117,9 @@ namespace SuperSocket.SocketBase
         [OnSerializing]
         private void OnSerializing(StreamingContext context)
         {
-            m_InternalList = new List<KeyValuePair<string, object>>(m_Value.Count);
+            m_InternalList = new List<KeyValuePair<string, object>>(m_Values.Count);
 
-            foreach (var entry in m_Value)
+            foreach (var entry in m_Values)
             {
                 m_InternalList.Add(new KeyValuePair<string, object>(entry.Key, entry.Value));
             }
@@ -133,14 +133,14 @@ namespace SuperSocket.SocketBase
                 return;
             }
 
-            if (m_Value == null)
+            if (m_Values == null)
             {
-                m_Value = new Dictionary<string, object>();
+                m_Values = new Dictionary<string, object>();
             }
 
             foreach (var entry in m_InternalList)
             {
-                m_Value.Add(entry.Key, entry.Value);
+                m_Values.Add(entry.Key, entry.Value);
             }
 
             m_InternalList = null;

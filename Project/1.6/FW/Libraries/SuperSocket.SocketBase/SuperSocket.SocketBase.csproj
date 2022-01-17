@@ -49,7 +49,6 @@
     <Compile Include="AppServerBase.NET45.cs" />
     <Compile Include="AppSession.cs" />
     <Compile Include="Async.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="CommandExecutingContext.cs" />
     <Compile Include="Command\CommandBase.cs" />
     <Compile Include="Command\CommandInfo.cs" />
@@ -93,10 +92,10 @@
     <Compile Include="ISocketServer.cs" />
     <Compile Include="ISocketServerFactory.cs" />
     <Compile Include="IsolationMode.cs" />
-    <Compile Include="ISoscketSession.cs" />
+    <Compile Include="ISocketSession.cs" />
     <Compile Include="IStatusInfoSource.cs" />
     <Compile Include="ISystemEndPoint.cs" />
-    <Compile Include="IWorkltem.cs" />
+    <Compile Include="IWorkItem.cs" />
     <Compile Include="ListenerInfo.cs" />
     <Compile Include="LoggerExtension.cs" />
     <Compile Include="Logging\ConsoleLog.cs" />

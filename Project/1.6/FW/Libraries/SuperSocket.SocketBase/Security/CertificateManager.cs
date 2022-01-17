@@ -12,6 +12,7 @@ namespace SuperSocket.SocketBase.Security
         {
             if (!string.IsNullOrEmpty(cerConfig.FilePath))
             {
+                //To keep compatible with website hosting
                 string filePath;
 
                 if (Path.IsPathRooted(cerConfig.FilePath))
@@ -23,8 +24,8 @@ namespace SuperSocket.SocketBase.Security
                     filePath = relativePathHandler(cerConfig.FilePath);
                 }
 
-                return new X509Certificate2(filePath, cerConfig.Password, cerConfig.KeyStorageFlags);
-                
+
+                return new X509Certificate2(filePath, cerConfig.Password, cerConfig.KeyStorageFlags);    
             }
             else
             {

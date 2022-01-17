@@ -30,11 +30,11 @@ namespace SuperSocket.SocketBase.Command
         /// Called when [updated].
         /// </summary>
         /// <param name="commands">The commands.</param>
-        public void OnUpdated(IEnumerable<CommandUpdateInfo<TCommand>> commands)
+        protected void OnUpdated(IEnumerable<CommandUpdateInfo<TCommand>> commands)
         {
             var handler = Updated;
 
-            if (handler !=null)
+            if (handler != null)
             {
                 handler(this, new CommandUpdateEventArgs<TCommand>(commands));
             }

@@ -14,7 +14,6 @@ namespace SuperSocket.SocketBase.Command
     public class ReflectCommandLoader<TCommand> : CommandLoaderBase<TCommand>
         where TCommand : class, ICommand
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ReflectCommandLoader{TCommand}"/> class.
         /// </summary>
@@ -24,7 +23,6 @@ namespace SuperSocket.SocketBase.Command
         }
 
         private IAppServer m_AppServer;
-        
         
         /// <summary>
         /// Initializes the command loader by the root config and the server instance.
@@ -58,18 +56,16 @@ namespace SuperSocket.SocketBase.Command
 
             if (!string.IsNullOrEmpty(commandAssembly))
             {
-                OnError(
-                    "The configuration attribute 'commandAssembly' is not used, please try to use the child node 'commandAssemblies' insted!");
+                OnError("The configuration attribute 'commandAssembly' is not in used, please try to use the child node 'commandAssemblies' instead!");
                 return false;
             }
+
 
             if (m_AppServer.Config.CommandAssemblies != null && m_AppServer.Config.CommandAssemblies.Any())
             {
                 try
                 {
-                    var definedAssemblies =
-                        AssemblyUtil.GetAssembliesFromStrings(m_AppServer.Config.CommandAssemblies
-                            .Select(a => a.Assembly).ToArray());
+                    var definedAssemblies = AssemblyUtil.GetAssembliesFromStrings(m_AppServer.Config.CommandAssemblies.Select(a => a.Assembly).ToArray());
 
                     if (definedAssemblies.Any())
                     {

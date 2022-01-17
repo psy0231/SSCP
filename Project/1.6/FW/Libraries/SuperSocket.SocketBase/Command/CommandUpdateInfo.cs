@@ -20,14 +20,31 @@
         /// </summary>
         Update
     }
+
+    /// <summary>
+    /// Command update information
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class CommandUpdateInfo<T>
     {
+        /// <summary>
+        /// Gets or sets the update action.
+        /// </summary>
+        /// <value>
+        /// The update action.
+        /// </value>
         public CommandUpdateAction UpdateAction
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Gets or sets the target command.
+        /// </summary>
+        /// <value>
+        /// The command.
+        /// </value>
         public T Command
         {
             get;

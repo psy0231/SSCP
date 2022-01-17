@@ -9,22 +9,22 @@
         /// Not initialized
         /// </summary>
         NotInitialized = ServerStateConst.NotInitialized,
-       
+
         /// <summary>
         /// In initializing
         /// </summary>
         Initializing = ServerStateConst.Initializing, 
-     
+
         /// <summary>
         /// Has been initialized, but not started
         /// </summary>
         NotStarted = ServerStateConst.NotStarted,
-      
+
         /// <summary>
         /// In starting
         /// </summary>
         Starting = ServerStateConst.Starting,
-     
+
         /// <summary>
         /// In running
         /// </summary>
@@ -33,7 +33,7 @@
         /// <summary>
         /// In stopping
         /// </summary>
-        Stopping = ServerStateConst.Stopping
+        Stopping = ServerStateConst.Stopping,
     }
 
     internal class ServerStateConst

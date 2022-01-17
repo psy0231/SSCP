@@ -56,7 +56,8 @@ namespace SuperSocket.SocketBase.Config
                 this.CommandLoaders = source.CommandLoaders.Select(s => s.CopyPropertiesTo(new TypeProviderConfig())).ToArray();
             }
         }
-      
+
+
         /// <summary>
         /// Gets the servers definitions.
         /// </summary>

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
+using System.Net;
 
 namespace SuperSocket.SocketBase
 {
@@ -56,6 +56,7 @@ namespace SuperSocket.SocketBase
         /// <returns></returns>
         bool Initialize();
 
+
         /// <summary>
         /// Initializes the bootstrap with a listen endpoint replacement dictionary
         /// </summary>
@@ -70,6 +71,7 @@ namespace SuperSocket.SocketBase
         /// <returns></returns>
         bool Initialize(Func<IServerConfig, IServerConfig> serverConfigResolver);
 
+
         /// <summary>
         /// Initializes the bootstrap with the configuration
         /// </summary>
@@ -83,7 +85,7 @@ namespace SuperSocket.SocketBase
         /// <param name="serverConfigResolver">The server config resolver.</param>
         /// <param name="logFactory">The log factory.</param>
         /// <returns></returns>
-        bool Initialize(Func<IServerConfig, IServerConfig> ServerConfigResolver, ILogFactory logFactory);
+        bool Initialize(Func<IServerConfig, IServerConfig> serverConfigResolver, ILogFactory logFactory);
 
         /// <summary>
         /// Starts this bootstrap.
@@ -95,6 +97,7 @@ namespace SuperSocket.SocketBase
         /// Stops this bootstrap.
         /// </summary>
         void Stop();
+
 
         /// <summary>
         /// Gets the startup config file.
@@ -116,6 +119,9 @@ namespace SuperSocket.SocketBase
         }
     }
 
+    /// <summary>
+    /// The bootstrap interface to support add new server instance in runtime
+    /// </summary>
     public interface IDynamicBootstrap
     {
         /// <summary>
@@ -131,7 +137,8 @@ namespace SuperSocket.SocketBase
         /// <param name="config">The new server's config.</param>
         /// <returns></returns>
         bool AddAndStart(IServerConfig config);
-        
+
+
         /// <summary>
         /// Removes the server instance which is specified by name.
         /// </summary>
