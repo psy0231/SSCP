@@ -9,3 +9,11 @@
 - HttpRequestInfoBasse(IHrrpRequestInfo)
 - MimeHeaderHelper
 - HttpReceiveFilterBase
+
+# PolicyServer
+- PolicyReceiveFilter
+- PolicyReceiveFilterFactory
+- PolicySession
+- PolicyServer
+- SilverlightPolicyServer
+- FlashPolicyServer

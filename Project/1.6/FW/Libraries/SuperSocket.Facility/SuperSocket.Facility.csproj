@@ -38,6 +38,12 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="PolicyServer\FlashPolicyServer.cs" />
+        <Compile Include="PolicyServer\PolicyReceiveFilter.cs" />
+        <Compile Include="PolicyServer\PolicyReceiveFilterFactory.cs" />
+        <Compile Include="PolicyServer\PolicyServer.cs" />
+        <Compile Include="PolicyServer\PolicySession.cs" />
+        <Compile Include="PolicyServer\SilverlightPolicyServer.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Protocol\BeginEndMarkReceiveFilter.cs" />
         <Compile Include="Protocol\CountSpliterReceiveFilter.cs" />
