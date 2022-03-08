@@ -30,7 +30,7 @@ namespace SuperSocket.SocketBase.Command
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="requestInfo">The request info.</param>
-        void ExcuteCommand(TAppSession session, TRequestInfo requestInfo);
+        void ExecuteCommand(TAppSession session, TRequestInfo requestInfo);
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace SuperSocket.SocketBase.Command
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="requestInfo">The request info.</param>
-        public void ExcuteCommand(TAppSession session, TRequestInfo requestInfo)
+        public void ExecuteCommand(TAppSession session, TRequestInfo requestInfo)
         {
             
         }

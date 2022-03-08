@@ -1,0 +1,7 @@
+- IScriptSource
+- DynamicCommand
+  - need Reference/.../microsoft.scripting
+- ScriptSourceBase
+- FileScriptSource
+- DynamicCommandLoaderBase
+- DynamicCommandLoader

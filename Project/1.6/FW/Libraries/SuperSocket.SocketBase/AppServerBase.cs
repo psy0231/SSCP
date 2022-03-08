@@ -1406,7 +1406,7 @@ namespace SuperSocket.SocketBase
 
                     if (commandFilters == null)
                     {
-                        command.ExcuteCommand(session, requestInfo);
+                        command.ExecuteCommand(session, requestInfo);
                     }
                     else
                     {
@@ -1434,7 +1434,7 @@ namespace SuperSocket.SocketBase
                         {
                             try
                             {
-                                command.ExcuteCommand(session, requestInfo);
+                                command.ExecuteCommand(session, requestInfo);
                             }
                             catch (Exception exc)
                             {

@@ -20,7 +20,7 @@ namespace SuperSocket.SocketBase.Command
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="requestInfo">The request info.</param>
-        public abstract void ExcuteCommand(TAppSession session, TRequestInfo requestInfo);
+        public abstract void ExecuteCommand(TAppSession session, TRequestInfo requestInfo);
 
 
         #endregion
