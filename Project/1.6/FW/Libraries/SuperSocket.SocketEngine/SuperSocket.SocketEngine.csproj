@@ -42,6 +42,12 @@
         <Compile Include="Class1.cs" />
         <Compile Include="Configuration\CertificateConfig.cs" />
         <Compile Include="Configuration\CommandAssembly.cs" />
+        <Compile Include="Configuration\Listener.cs" />
+        <Compile Include="Configuration\Server.cs" />
+        <Compile Include="Configuration\Server.Net45.cs" />
+        <Compile Include="Configuration\ServerCollection.cs" />
+        <Compile Include="Configuration\SocketServiceConfig.cs" />
+        <Compile Include="Configuration\SocketServiceConfig.Net45.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

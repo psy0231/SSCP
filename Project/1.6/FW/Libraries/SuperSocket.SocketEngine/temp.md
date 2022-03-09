@@ -2,4 +2,10 @@
   - CommandAssembly
   - CommandAssemblyCollection
   - CertificateConfig
-  - 
+  - Listener
+  - ListenerConfigCollection
+  - Server
+    - Server.Net45
+  - ServerCollection
+  - SocketServiceConfig
+    - SocketServiceConfig.Net45
