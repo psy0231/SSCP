@@ -64,6 +64,7 @@
         <Compile Include="ServerTypeMetadata.cs" />
         <Compile Include="SocketListenerBase.cs" />
         <Compile Include="SocketServerBase.cs" />
+        <Compile Include="SocketSession.cs" />
         <Compile Include="TcpAsyncSocketListener.cs" />
         <Compile Include="UdpSocketListener.cs" />
     </ItemGroup>
