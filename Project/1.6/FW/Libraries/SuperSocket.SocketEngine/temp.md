@@ -34,3 +34,5 @@
 - SocketListenerBase
 - TcpAsyncSocketListener
 - UdpSocketListener
+- SocketSession
+- UdpSocketSession
