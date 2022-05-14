@@ -1,11 +1,12 @@
 ﻿using System.Net.Sockets;
 using SuperSocket.SocketBase;
+using SuperSocket.SocketEngine.AsyncSocket;
 
 namespace SuperSocket.SocketEngine
 {
     public interface IAsyncSocketSessionBase : ILoggerProvider
     {
-        SocketAsyncEventArgs SocketAsyncProxy { get; }
+        SocketAsyncEventArgsProxy SocketAsyncProxy { get; }
         
         Socket Client { get; }
     }
