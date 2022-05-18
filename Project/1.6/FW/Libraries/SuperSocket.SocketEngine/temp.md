@@ -37,3 +37,9 @@
 - SocketSession
 - UdpSocketSession
 - UdpSocketServer
+- AsyncSocketSession
+- TcpSocketServerBase
+- AsyncStreamSocketSession
+  - INegotiateSocketSession
+- AsyncSocketServer
+  - ActiveConnectState

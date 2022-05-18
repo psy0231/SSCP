@@ -127,7 +127,7 @@ namespace SuperSocket.SocketEngine
 
         protected abstract ISocketListener CreateListener(ListenerInfo listenerInfo);
 
-        public void Stop()
+        public virtual void Stop()
         {
             IsStopped = true;
 
