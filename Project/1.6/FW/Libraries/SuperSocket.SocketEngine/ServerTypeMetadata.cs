@@ -6,7 +6,7 @@ namespace SuperSocket.SocketEngine
     [Serializable]
     public class ServerTypeMetadata
     {
-        public StatusInfoAttribute[] StatusInfoMegadata { get; set; }
+        public StatusInfoAttribute[] StatusInfoMetadata { get; set; }
         
         public bool IsServerManager { get; set; }
     }

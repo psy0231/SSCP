@@ -43,3 +43,7 @@
   - INegotiateSocketSession
 - AsyncSocketServer
   - ActiveConnectState
+- SocketServerFactory
+- WorkItemFactoryInfo
+- WorkItemFactoryInfoLoader
+- IsolationAppServer

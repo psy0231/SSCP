@@ -59,6 +59,7 @@
         <Compile Include="IProcessServer.cs" />
         <Compile Include="IRemoteWorkItem.cs" />
         <Compile Include="ISocketListener.cs" />
+        <Compile Include="IsolationAppServer.cs" />
         <Compile Include="PerformanceMonitor.cs" />
         <Compile Include="ProcessLocker.cs" />
         <Compile Include="ProcessPerformanceCounterHelper.cs" />
@@ -67,6 +68,7 @@
         <Compile Include="ServerTypeMetadata.cs" />
         <Compile Include="SocketListenerBase.cs" />
         <Compile Include="SocketServerBase.cs" />
+        <Compile Include="SocketServerFactory.cs" />
         <Compile Include="SocketSession.cs" />
         <Compile Include="SocketSession.Net45.cs" />
         <Compile Include="TcpAsyncSocketListener.cs" />
@@ -74,6 +76,8 @@
         <Compile Include="UdpSocketListener.cs" />
         <Compile Include="UdpSocketServer.cs" />
         <Compile Include="UdpSocketSession.cs" />
+        <Compile Include="WorkItemFactoryInfo.cs" />
+        <Compile Include="WorkItemFactoryInfoLoader.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\SuperSocket.Common\SuperSocket.Common.csproj">

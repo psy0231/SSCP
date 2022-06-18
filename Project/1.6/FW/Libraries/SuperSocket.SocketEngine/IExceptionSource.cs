@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using ErrorEventArgs = SuperSocket.Common.ErrorEventArgs;
 
 namespace SuperSocket.SocketEngine
 {
