@@ -47,3 +47,5 @@
 - WorkItemFactoryInfo
 - WorkItemFactoryInfoLoader
 - IsolationAppServer
+- MarshalAppServer
+- AppDomainAppServer

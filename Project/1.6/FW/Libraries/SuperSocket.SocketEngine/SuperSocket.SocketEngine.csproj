@@ -39,6 +39,8 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="AppDomainAppServer.cs" />
+        <Compile Include="AppDomainAppServer.StatusInfo.cs" />
         <Compile Include="AssemblyImport.cs" />
         <Compile Include="AsyncSocketServer.cs" />
         <Compile Include="AsyncSocketSession.cs" />
@@ -60,6 +62,7 @@
         <Compile Include="IRemoteWorkItem.cs" />
         <Compile Include="ISocketListener.cs" />
         <Compile Include="IsolationAppServer.cs" />
+        <Compile Include="MarshalAppServer.cs" />
         <Compile Include="PerformanceMonitor.cs" />
         <Compile Include="ProcessLocker.cs" />
         <Compile Include="ProcessPerformanceCounterHelper.cs" />
