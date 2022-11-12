@@ -9,7 +9,7 @@ namespace SuperSocket.SocketEngine
     {
         private const string m_GeneralErrorMessage = "Unexpected error";
         private const string m_GeneralSocketErrorMessage = "Unexpected socket error: {0}";
-        private const string m_CallerInformation = "caller: {0}, file path: {1}, line number: {2}";
+        private const string m_CallerInformation = "Caller: {0}, file path: {1}, line number: {2}";
 
         /// <summary>
         /// Logs the error, skip the ignored exception
@@ -78,6 +78,5 @@ namespace SuperSocket.SocketEngine
                 , string.Format(m_GeneralSocketErrorMessage, socketErrorCode) + Environment.NewLine + string.Format(m_CallerInformation, caller, callerFilePath, callerLineNumber)
                 , new SocketException(socketErrorCode));
         } 
-        
     }
 }

@@ -18,7 +18,6 @@ namespace SuperSocket.SocketEngine
     [StatusInfo(StatusInfoKeys.AvailableCompletionPortThreads, Name = "Available Completion Port Threads", Format = "{0}", DataType = typeof(double), Order = 513)]
     [StatusInfo(StatusInfoKeys.MaxWorkingThreads, Name = "Maximum Working Threads", Format = "{0}", DataType = typeof(double), Order = 513)]
     [StatusInfo(StatusInfoKeys.MaxCompletionPortThreads, Name = "Maximum Completion Port Threads", Format = "{0}", DataType = typeof(double), Order = 514)]
-    
     partial class ProcessAppServer : IsolationAppServer, IProcessServer
     {
         private const string m_AgentUri = "ipc://{0}/WorkItemAgent.rem";
@@ -74,6 +73,7 @@ namespace SuperSocket.SocketEngine
                 {
                     return 0;
                 }
+
                 return m_WorkingProcess.Id;
             }
         }
@@ -107,7 +107,7 @@ namespace SuperSocket.SocketEngine
 
             var portName = string.Format(m_PortNameTemplate, Name, "{0}");
 
-            var process = m_Locker.GetLockedPorcess();
+            var process = m_Locker.GetLockedProcess();
 
             if (process == null)
             {
@@ -154,6 +154,7 @@ namespace SuperSocket.SocketEngine
                 m_WorkingProcess.EnableRaisingEvents = true;
             }
 
+
             portName = string.Format(portName, m_WorkingProcess.Id);
             m_ServerTag = portName;
 
@@ -175,13 +176,13 @@ namespace SuperSocket.SocketEngine
                 if (!m_ProcessWorkEvent.WaitOne(startTimeOut * 1000))
                 {
                     ShutdownProcess();
-                    OnExceptionThrown(new Exception("The remote work item was timeout to setip!"));
+                    OnExceptionThrown(new Exception("The remote work item was timeout to setup!"));
                     return null;
                 }
                 
                 if (!"Ok".Equals(m_ProcessWorkStatus, StringComparison.OrdinalIgnoreCase))
                 {
-                    OnExceptionThrown(new Exception("The Agent process didn't start siccessfully!"));
+                    OnExceptionThrown(new Exception("The Agent process didn't start successfully!"));
                     return null;
                 }
 
@@ -225,7 +226,7 @@ namespace SuperSocket.SocketEngine
                 if (!ret)
                 {
                     ShutdownProcess();
-                    OnExceptionThrown(new Exception("The remote work item failed to setup", exc));
+                    OnExceptionThrown(new Exception("The remote work item failed to setup!", exc));
                     return null;
                 }
 
@@ -270,7 +271,7 @@ namespace SuperSocket.SocketEngine
             {
                 return (IRemoteWorkItem)Activator.GetObject(typeof(IRemoteWorkItem), remoteUri);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 ShutdownProcess();
                 OnExceptionThrown(new Exception("Failed to get server instance of a remote process!", e));
@@ -322,7 +323,7 @@ namespace SuperSocket.SocketEngine
 
             if (unexpectedShutdown && m_AutoStartAfterUnexpectedShutdown)
             {
-                // auto restart if meet a unexpected shurdown
+                //auto restart if meet a unexpected shutdown
                 ((IWorkItemBase)this).Start();
             }
         }
@@ -360,10 +361,11 @@ namespace SuperSocket.SocketEngine
             var status = base.CollectServerStatus(nodeStatus);
             status.Tag = m_ServerTag;
 
-            if (m_PerformanceCounterHelper != null)
+            if(m_PerformanceCounterHelper != null)
             {
                 m_PerformanceCounterHelper.Collect(status);
             }
+            
             return status;
         }
     }

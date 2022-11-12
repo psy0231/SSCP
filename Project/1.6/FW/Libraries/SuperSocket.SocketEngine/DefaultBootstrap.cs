@@ -1,9 +1,4 @@
-﻿using SuperSocket.Common;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Logging;
-using SuperSocket.SocketBase.Metadata;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -13,7 +8,11 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
-using System.Threading.Tasks;
+using SuperSocket.Common;
+using SuperSocket.SocketBase;
+using SuperSocket.SocketBase.Config;
+using SuperSocket.SocketBase.Logging;
+using SuperSocket.SocketBase.Metadata;
 
 namespace SuperSocket.SocketEngine
 {    
@@ -85,6 +84,7 @@ namespace SuperSocket.SocketEngine
                 {
                     return m_Config;
                 }
+
                 return m_RootConfig;
             }
         }
@@ -162,14 +162,17 @@ namespace SuperSocket.SocketEngine
             {
                 throw new ArgumentNullException("rootConfig");
             }
+
             if (appServers == null)
             {
                 throw new ArgumentNullException("appServers");
             }
+            
             if(!appServers.Any())
             {
                 throw new ArgumentException("appServers must have one item at least", "appServers");
             }
+            
             if (logFactory == null)
             {
                 throw new ArgumentNullException("logFactory");
@@ -278,6 +281,7 @@ namespace SuperSocket.SocketEngine
                 {
                     m_GlobalLog.Error(e);
                 }
+
                 return false;
             }
 
@@ -380,6 +384,7 @@ namespace SuperSocket.SocketEngine
                 exceptionSource.ExceptionThrown += new EventHandler<ErrorEventArgs>(exceptionSource_ExceptionThrown);
             }
 
+
             var setupResult = false;
 
             try
@@ -403,6 +408,7 @@ namespace SuperSocket.SocketEngine
                 {
                     m_GlobalLog.Error("Failed to setup server instance!");
                 }
+
                 return null;
             }
 
@@ -451,6 +457,7 @@ namespace SuperSocket.SocketEngine
                     {
                         m_GlobalLog.Error(e);
                     }
+
                     return false;
                 }
             }
@@ -515,6 +522,7 @@ namespace SuperSocket.SocketEngine
                 {
                     m_GlobalLog.Error("Failed to register remoting access service!", e);
                 }
+
                 return false;
             }
 
@@ -574,6 +582,7 @@ namespace SuperSocket.SocketEngine
                 {
                     m_GlobalLog.Error("You cannot invoke method Start() before initializing!");
                 }
+                
                 return StartResult.Failed;
             }
 

@@ -20,6 +20,7 @@ namespace SuperSocket.SocketEngine
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         }
 
+        //Process cannot resolved assemblies
         Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             AssemblyName name = new AssemblyName(args.Name);

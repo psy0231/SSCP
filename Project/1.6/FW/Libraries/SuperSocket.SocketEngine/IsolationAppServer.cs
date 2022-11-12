@@ -12,7 +12,7 @@ namespace SuperSocket.SocketEngine
 {
     abstract class IsolationAppServer : MarshalByRefObject, IWorkItem, IStatusInfoSource, IExceptionSource, IDisposable
     {
-        protected const string WorkingDir = "/AppRoot/";
+        protected const string WorkingDir = "AppRoot";
         
         protected string ServerTypeName { get; private set; }
         
@@ -30,13 +30,19 @@ namespace SuperSocket.SocketEngine
 
         private AutoResetEvent m_StopResetEvent = new AutoResetEvent(false);
 
-        public IsolationAppServer(string serverTypeName, StatusInfoAttribute[] serverStatusMetadata)
+        protected IsolationAppServer(string serverTypeName, StatusInfoAttribute[] serverStatusMetadata)
         {
             State = ServerState.NotInitialized;
             ServerTypeName = serverTypeName;
             m_ServerStatusMetadata = PrepareStatusMetadata(serverStatusMetadata);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether [status metadata extended].
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [status metadata extended]; otherwise, <c>false</c>.
+        /// </value>
         protected virtual bool StatusMetadataExtended
         {
             get { return false; }
@@ -99,7 +105,7 @@ namespace SuperSocket.SocketEngine
                 true,
                 BindingFlags.CreateInstance,
                 null,
-                new object[]{currentDomain.BaseDirectory},
+                new object[] { currentDomain.BaseDirectory },
                 null,
                 new object[0]);
 
@@ -224,6 +230,7 @@ namespace SuperSocket.SocketEngine
 
             return m_StoppedStatus;
         }
+
         public virtual StatusInfoCollection CollectServerStatus(StatusInfoCollection nodeStatus)
         {
             var appServer = AppServer;
@@ -240,6 +247,16 @@ namespace SuperSocket.SocketEngine
             return currentStatus;
         }
 
+        /// <summary>
+        /// Obtains a lifetime service object to control the lifetime policy for this instance.
+        /// Return null, never expired
+        /// </summary>
+        /// <returns>
+        /// An object of type <see cref="T:System.Runtime.Remoting.Lifetime.ILease" /> used to control the lifetime policy for this instance. This is the current lifetime service object for this instance if one exists; otherwise, a new lifetime service object initialized to the value of the <see cref="P:System.Runtime.Remoting.Lifetime.LifetimeServices.LeaseManagerPollTime" /> property.
+        /// </returns>
+        /// <PermissionSet>
+        ///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="RemotingConfiguration, Infrastructure" />
+        ///   </PermissionSet>
         public override object InitializeLifetimeService()
         {
             return null;
@@ -248,8 +265,8 @@ namespace SuperSocket.SocketEngine
         public void Dispose()
         {
             Dispose(true);
-            //Use SupressFinalize in case a subclass 
-            //of this type implements a finalizer.
+            // Use SupressFinalize in case a subclass 
+            // of this type implements a finalizer.
             GC.SuppressFinalize(this);
         }
         
@@ -288,6 +305,5 @@ namespace SuperSocket.SocketEngine
             
             appServer.TransferSystemMessage(messageType, messageData);
         }
-
     }
 }

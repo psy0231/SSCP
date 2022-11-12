@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Sockets;
-using System.Runtime.Remoting.Messaging;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 
@@ -40,13 +39,13 @@ namespace SuperSocket.SocketEngine
                 m_ListenSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
                 m_ListenSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
 
-                SocketAsyncEventArgs acceptEventArgs = new SocketAsyncEventArgs();
-                m_AcceptSAE = acceptEventArgs;
-                acceptEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(acceptEventArg_Completed);
+                SocketAsyncEventArgs acceptEventArg = new SocketAsyncEventArgs();
+                m_AcceptSAE = acceptEventArg;
+                acceptEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(acceptEventArg_Completed);
 
-                if (!m_ListenSocket.AcceptAsync(acceptEventArgs))
+                if (!m_ListenSocket.AcceptAsync(acceptEventArg))
                 {
-                    ProcessAccept(acceptEventArgs);
+                    ProcessAccept(acceptEventArg);
                 }
 
                 return true;
@@ -59,7 +58,8 @@ namespace SuperSocket.SocketEngine
             }
         }
 
-        void acceptEventArg_Completed(object saender, SocketAsyncEventArgs e)
+
+        void acceptEventArg_Completed(object sender, SocketAsyncEventArgs e)
         {
             ProcessAccept(e);
         }
@@ -110,7 +110,7 @@ namespace SuperSocket.SocketEngine
             catch (Exception exc)
             {
                 OnError(exc);
-                //Make sure ProcessAccept won't be executed in this thread
+                //make sure ProcessAccept won't be executed in this thread
                 willRaiseEvent = true;
             }
 

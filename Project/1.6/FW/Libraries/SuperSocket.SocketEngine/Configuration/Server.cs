@@ -11,7 +11,7 @@ namespace SuperSocket.SocketEngine.Configuration
     /// <summary>
     /// Server configuration
     /// </summary>
-    public partial class  Server : ConfigurationElementBase, IServerConfig
+    public partial class Server : ConfigurationElementBase, IServerConfig
     {
         /// <summary>
         /// Gets the name of the server type this appServer want to use.
@@ -22,7 +22,7 @@ namespace SuperSocket.SocketEngine.Configuration
         [ConfigurationProperty("serverTypeName", IsRequired = false)]
         public string ServerTypeName
         {
-            get{ return this["serverTypeName"] as string; }
+            get { return this["serverTypeName"] as string; }
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace SuperSocket.SocketEngine.Configuration
         [ConfigurationProperty("serverType", IsRequired = false)]
         public string ServerType
         {
-            get{ return this["serverType"] as string; }
+            get { return this["serverType"] as string; }
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace SuperSocket.SocketEngine.Configuration
         /// <value>
         ///   <c>true</c> if disabled; otherwise, <c>false</c>.
         /// </value>
-        [ConfigurationProperty("disabled", IsRequired = false)]
+        [ConfigurationProperty("disabled", DefaultValue = "false")]
         public bool Disabled
         {
             get { return (bool)this["disabled"]; }
@@ -194,6 +194,7 @@ namespace SuperSocket.SocketEngine.Configuration
             get { return (int)this["clearIdleSessionInterval"]; }
         }
 
+
         /// <summary>
         /// Gets the idle session timeout time length, in seconds.
         /// </summary>
@@ -234,7 +235,10 @@ namespace SuperSocket.SocketEngine.Configuration
         [ConfigurationProperty("security", IsRequired = false, DefaultValue = "None")]
         public string Security
         {
-            get { return (string)this["security"]; }
+            get 
+            { 
+                return (string)this["security"]; 
+            }
         }
 
         /// <summary>
@@ -423,7 +427,7 @@ namespace SuperSocket.SocketEngine.Configuration
         /// The command assemblies.
         /// </value>
         [ConfigurationProperty("commandAssemblies", IsRequired = false)]
-        public CommandAssemblyCollection CommandAssemblyCollection
+        public CommandAssemblyCollection CommandAssemblies
         {
             get
             {
@@ -431,12 +435,11 @@ namespace SuperSocket.SocketEngine.Configuration
             }
         }
 
-
         IEnumerable<ICommandAssemblyConfig> IServerConfig.CommandAssemblies
         {
             get
             {
-                return this.CommandAssemblyCollection;
+                return this.CommandAssemblies;
             }
         }
         
@@ -451,7 +454,7 @@ namespace SuperSocket.SocketEngine.Configuration
         {
             return this.OptionElements.GetChildConfig<TConfig>(childConfigName);
         }
-   
+
         /// <summary>
         /// Gets a value indicating whether an unknown attribute is encountered during deserialization.
         /// To keep compatible with old configuration
@@ -463,6 +466,7 @@ namespace SuperSocket.SocketEngine.Configuration
         /// </returns>
         protected override bool OnDeserializeUnrecognizedAttribute(string name, string value)
         {
+            //To keep compatible with old configuration
             if (!"serviceName".Equals(name, StringComparison.OrdinalIgnoreCase))
             {
                 return base.OnDeserializeUnrecognizedAttribute(name, value);

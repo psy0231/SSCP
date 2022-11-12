@@ -8,7 +8,7 @@ using SuperSocket.SocketBase.Metadata;
 
 namespace SuperSocket.SocketEngine
 {
-    public class ProcessPerformanceCounterHelper : IDisposable
+    class ProcessPerformanceCounterHelper : IDisposable
     {
         private PerformanceCounter m_CpuUsagePC;
         private PerformanceCounter m_ThreadCountPC;
@@ -25,13 +25,13 @@ namespace SuperSocket.SocketEngine
             //Windows .Net, to avoid same name process issue
             if (!Platform.IsMono)
             {
-                RegisterSameNameProcess(process);
+                RegisterSameNameProcesses(process);
             }
 
             SetupPerformanceCounters();
         }
 
-        private void RegisterSameNameProcess(Process process)
+        private void RegisterSameNameProcesses(Process process)
         {
             foreach (var p in Process.GetProcessesByName(process.ProcessName).Where(x => x.Id != process.Id))
             {
@@ -40,6 +40,8 @@ namespace SuperSocket.SocketEngine
             }
         }
 
+        //When find a same name process exit, re-initialize the performance counters
+        //because the performance counters' instance names could have been changed
         void SameNameProcess_Exited(object sender, EventArgs e)
         {
             SetupPerformanceCounters();
@@ -76,6 +78,7 @@ namespace SuperSocket.SocketEngine
             m_WorkingSetPC = new PerformanceCounter("Process", "Working Set", instanceName);
         }
 
+        //This method is only used in windows
         private static string GetPerformanceCounterInstanceName(Process process)
         {
             var processId = process.Id;
@@ -102,7 +105,7 @@ namespace SuperSocket.SocketEngine
                     {
                         counterProcessId = (int)performanceCounter.RawValue;
                     }
-                    catch //that process has been shutdowm
+                    catch //that process has been shutdown
                     {
                         continue;
                     }
@@ -156,7 +159,7 @@ namespace SuperSocket.SocketEngine
                         throw e;
                     }
                     
-                    //If a same nams process exited, this process's performance counters instance name counld be changed,
+                    //If a same name process exited, this process's performance counters instance name could be changed,
                     //so if the old performance counter cannot be access, get the performance counter's name again
                     var newInstanceName = GetPerformanceCounterInstanceName(m_Process);
 

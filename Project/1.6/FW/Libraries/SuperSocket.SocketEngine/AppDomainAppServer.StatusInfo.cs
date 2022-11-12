@@ -1,7 +1,7 @@
 ﻿using System;
+using SuperSocket.SocketBase.Metadata;
 using System.Diagnostics;
 using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Metadata;
 
 namespace SuperSocket.SocketEngine
 {
@@ -40,7 +40,7 @@ namespace SuperSocket.SocketEngine
         {
             var statusCollection = base.CollectServerStatus(nodeStatus);
             
-            if(!m_AppDomainMonitoringSupported)
+            if (!m_AppDomainMonitoringSupported)
                 return statusCollection;
 
             if (statusCollection != null && m_HostDomain != null)
@@ -53,7 +53,7 @@ namespace SuperSocket.SocketEngine
 
                 if (AppDomain.MonitoringSurvivedProcessMemorySize > 0)
                 {
-                    var value = (double)m_HostDomain.MonitoringTotalAllocatedMemorySize * 100 / (double)AppDomain.MonitoringSurvivedProcessMemorySize;
+                    var value = (double)m_HostDomain.MonitoringSurvivedMemorySize * 100 / (double)AppDomain.MonitoringSurvivedProcessMemorySize;
                     statusCollection[StatusInfoKeys.MemoryUsage] = (double)value;
                 }
             }

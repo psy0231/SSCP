@@ -88,6 +88,7 @@ namespace SuperSocket.SocketEngine
             CleanSocketAsyncEventArgs(e);
 
             var newPos = queue.Position + 1;
+
             if (newPos >= queue.Count)
             {
                 OnSendingCompleted(queue);
@@ -100,7 +101,7 @@ namespace SuperSocket.SocketEngine
         
         protected override void SendSync(SendingQueue queue)
         {
-            for (int i = 0; i < queue.Count; i++)
+            for (var i = 0; i < queue.Count; i++)
             {
                 var item = queue[i];
                 m_ServerSocket.SendTo(item.Array, item.Offset, item.Count, SocketFlags.None, RemoteEndPoint);

@@ -22,6 +22,5 @@ namespace SuperSocket.SocketEngine.Configuration
                 return (string)this["defaultCulture"];
             }
         }
-
     }
 }

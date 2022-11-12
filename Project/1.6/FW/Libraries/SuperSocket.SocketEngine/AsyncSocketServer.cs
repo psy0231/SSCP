@@ -128,7 +128,7 @@ namespace SuperSocket.SocketEngine
             
             socketSession.Closed += SessionClosed;
             
-            var negotiateSession = session as INegotiateSocketSession;
+            var negotiateSession = socketSession as INegotiateSocketSession;
 
             if (negotiateSession == null)
             {
@@ -210,7 +210,7 @@ namespace SuperSocket.SocketEngine
 
             if (pool == null || serverState == ServerState.Stopping || serverState == ServerState.NotStarted)
             {
-                if (!Environment.HasShutdownStarted && !AppDomain.CurrentDomain.IsFinalizingForUnload())
+                if(!Environment.HasShutdownStarted && !AppDomain.CurrentDomain.IsFinalizingForUnload())
                 {
                     args.Dispose();
                 }
@@ -261,9 +261,9 @@ namespace SuperSocket.SocketEngine
 
         class ActiveConnectState
         {
-            public TaskCompletionSource<ActiveConnectResult> TaskSource{ get; private set; }
+            public TaskCompletionSource<ActiveConnectResult> TaskSource { get; private set; }
             
-            public Socket Socket{ get; private set; }
+            public Socket Socket { get; private set; }
 
             public ActiveConnectState(TaskCompletionSource<ActiveConnectResult> taskSource, Socket socket)
             {
@@ -310,7 +310,7 @@ namespace SuperSocket.SocketEngine
                 }
                 else
                 {
-                    connectState.TaskSource.SetResult(new ActiveConnectResult { Result = true, Session = session});
+                    connectState.TaskSource.SetResult(new ActiveConnectResult { Result = true, Session = session });
                 }
             }
             catch (Exception e)

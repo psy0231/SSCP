@@ -19,6 +19,11 @@ namespace SuperSocket.SocketEngine
             
         }
 
+        /// <summary>
+        /// Starts to listen
+        /// </summary>
+        /// <param name="config">The server config.</param>
+        /// <returns></returns>
         public override bool Start(IServerConfig config)
         {
             try
@@ -79,7 +84,7 @@ namespace SuperSocket.SocketEngine
             {
                 try
                 {
-                    OnNewClientAcceptedAsync(m_ListenSocket, new object[]{e.Buffer.CloneRange(e.Offset, e.BytesTransferred), e.RemoteEndPoint.Serialize()});
+                    OnNewClientAcceptedAsync(m_ListenSocket, new object[] { e.Buffer.CloneRange(e.Offset, e.BytesTransferred), e.RemoteEndPoint.Serialize() });
                 }
                 catch (Exception exc)
                 {
@@ -104,7 +109,7 @@ namespace SuperSocket.SocketEngine
                 return;
             }
 
-            lock (this)
+            lock(this)
             {
                 if (m_ListenSocket == null)
                 {
@@ -115,7 +120,7 @@ namespace SuperSocket.SocketEngine
                 m_ReceiveSAE.Dispose();
                 m_ReceiveSAE = null;
 
-                if (!Platform.IsMono)
+                if(!Platform.IsMono)
                 {
                     try
                     {
@@ -128,9 +133,7 @@ namespace SuperSocket.SocketEngine
                 {
                     m_ListenSocket.Close();
                 }
-                catch
-                {
-                }
+                catch { }
                 finally
                 {
                     m_ListenSocket = null;

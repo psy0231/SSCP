@@ -4,7 +4,7 @@ using SuperSocket.SocketBase;
 
 namespace SuperSocket.SocketEngine.AsyncSocket
 {
-    public class SocketAsyncEventArgsProxy
+    class SocketAsyncEventArgsProxy
     {
         public SocketAsyncEventArgs SocketEventArgs { get; private set; }
         
@@ -46,7 +46,7 @@ namespace SuperSocket.SocketEngine.AsyncSocket
             }
             else
             {
-                throw new ArgumentException("The last operation completed on socket was not a receive");
+                throw new ArgumentException("The last operation completed on the socket was not a receive");
             }
         }
 

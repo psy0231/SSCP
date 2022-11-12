@@ -4,7 +4,7 @@ using SuperSocket.SocketBase.Metadata;
 namespace SuperSocket.SocketEngine
 {
     [Serializable]
-    public class ServerTypeMetadata
+    class ServerTypeMetadata
     {
         public StatusInfoAttribute[] StatusInfoMetadata { get; set; }
         

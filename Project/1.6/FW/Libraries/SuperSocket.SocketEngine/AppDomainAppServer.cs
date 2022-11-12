@@ -10,7 +10,6 @@ namespace SuperSocket.SocketEngine
     /// </summary>
     partial class AppDomainAppServer : IsolationAppServer
     {
-
         private AppDomain m_HostDomain;
         
         /// <summary>
@@ -47,7 +46,7 @@ namespace SuperSocket.SocketEngine
                     true,
                     BindingFlags.CreateInstance,
                     null,
-                    new object[]{ServerTypeName},
+                    new object[] { ServerTypeName },
                     null,
                     new object[0]);
 

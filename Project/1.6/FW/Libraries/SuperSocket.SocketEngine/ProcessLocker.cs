@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
+using System.Diagnostics;
 
 namespace SuperSocket.SocketEngine
 {
-    public class ProcessLocker
+    class ProcessLocker
     {
         private string m_LockFilePath;
 
@@ -13,7 +13,7 @@ namespace SuperSocket.SocketEngine
             m_LockFilePath = Path.Combine(workDir, lockFileName);
         }
 
-        public Process GetLockedPorcess()
+        public Process GetLockedProcess()
         {
             if (!File.Exists(m_LockFilePath))
             {

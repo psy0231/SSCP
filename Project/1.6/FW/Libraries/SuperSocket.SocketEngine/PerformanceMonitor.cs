@@ -11,7 +11,7 @@ using SuperSocket.SocketBase.Metadata;
 
 namespace SuperSocket.SocketEngine
 {
-    public class PerformanceMonitor : IPerformanceMonitor
+    class PerformanceMonitor : IPerformanceMonitor
     {
         public event Action<NodeStatus> OnStatusUpdate;
 
@@ -51,16 +51,16 @@ namespace SuperSocket.SocketEngine
                     new KeyValuePair<string, StatusInfoAttribute[]>(string.Empty,
                         new StatusInfoAttribute[]
                         {
-                            new StatusInfoAttribute(StatusInfoKeys.CpuUsage){ Name = "CPU Usage", Format = "{0:0.00}%", Order = 0 },
-                            new StatusInfoAttribute(StatusInfoKeys.MemoryUsage){ Name = "Physical Memory Usage",Format = "{0:N}", Order = 1 },
-                            new StatusInfoAttribute(StatusInfoKeys.TotalThreadCount){ Name = "Total Thread Count", Order = 2 },
-                            new StatusInfoAttribute(StatusInfoKeys.AvailableWorkingThreads){ Name = "Available Working Threads", Order = 3 },
-                            new StatusInfoAttribute(StatusInfoKeys.AvailableCompletionPortThreads){ Name = "Available Completion Port Thread", Order = 4 },
-                            new StatusInfoAttribute(StatusInfoKeys.MaxWorkingThreads){ Name = "Maximum Working THreads", Order = 5 },
-                            new StatusInfoAttribute(StatusInfoKeys.MaxCompletionPortThreads){ Name = "Maximum Completion Port Thread", Order = 6 }
+                            new StatusInfoAttribute(StatusInfoKeys.CpuUsage) { Name = "CPU Usage", Format = "{0:0.00}%", Order = 0 },
+                            new StatusInfoAttribute(StatusInfoKeys.MemoryUsage) { Name = "Physical Memory Usage", Format = "{0:N}", Order = 1 },
+                            new StatusInfoAttribute(StatusInfoKeys.TotalThreadCount) { Name = "Total Thread Count", Order = 2 },
+                            new StatusInfoAttribute(StatusInfoKeys.AvailableWorkingThreads) { Name = "Available Working Threads", Order = 3 },
+                            new StatusInfoAttribute(StatusInfoKeys.AvailableCompletionPortThreads) { Name = "Available Completion Port Threads", Order = 4 },
+                            new StatusInfoAttribute(StatusInfoKeys.MaxWorkingThreads) { Name = "Maximum Working Threads", Order = 5 },
+                            new StatusInfoAttribute(StatusInfoKeys.MaxCompletionPortThreads) { Name = "Maximum Completion Port Threads", Order = 6 }
                         }));
 
-                for (int i = 0; i < m_AppServers.Length; i++)
+                for (var i = 0; i < m_AppServers.Length; i++)
                 {
                     var server = m_AppServers[i];
                     m_ServerStatusMetadataSource.Add(
@@ -94,7 +94,7 @@ namespace SuperSocket.SocketEngine
 
             nodeStatus.BootstrapStatus = bootstrapStatus;
 
-            var instanceStatus = new List<StatusInfoCollection>(m_AppServers.Length);
+            var instancesStatus = new List<StatusInfoCollection>(m_AppServers.Length);
 
             var perfBuilder = new StringBuilder();
             
@@ -103,7 +103,7 @@ namespace SuperSocket.SocketEngine
             perfBuilder.AppendLine(string.Format("AvailableWorkingThreads: {0}, AvailableCompletionPortThreads: {1}", bootstrapStatus[StatusInfoKeys.AvailableWorkingThreads], bootstrapStatus[StatusInfoKeys.AvailableCompletionPortThreads]));
             perfBuilder.AppendLine(string.Format("MaxWorkingThreads: {0}, MaxCompletionPortThreads: {1}", bootstrapStatus[StatusInfoKeys.MaxWorkingThreads], bootstrapStatus[StatusInfoKeys.MaxCompletionPortThreads]));
 
-            for (int i = 0; i < m_AppServers.Length; i++)
+            for (var i = 0; i < m_AppServers.Length; i++)
             {
                 var s = m_AppServers[i];
 
@@ -122,7 +122,7 @@ namespace SuperSocket.SocketEngine
                     {
                         serverStatus = s.CollectServerStatus(bootstrapStatus);
                     }
-                    catch (Exception e)
+                    catch(Exception e)
                     {
                         m_PerfLog.Error("Failed to CollectServerStatus of " + s.Name, e);
                         
@@ -131,13 +131,13 @@ namespace SuperSocket.SocketEngine
                         continue;                    
                     }
                     
-                    instanceStatus.Add(serverStatus);
+                    instancesStatus.Add(serverStatus);
                     
                     perfBuilder.AppendLine(string.Format("{0} ----------------------------------", serverStatus.Tag));
 
-                    for (int j = 0; j < metadata.Length; j++)
+                    for (var j = 0; j < metadata.Length; j++)
                     {
-                        var statusInfoAtt = metadata[i];
+                        var statusInfoAtt = metadata[j];
 
                         if (!statusInfoAtt.OutputInPerfLog)
                         {
@@ -160,7 +160,7 @@ namespace SuperSocket.SocketEngine
             
             m_PerfLog.Info(perfBuilder.ToString());
 
-            nodeStatus.InstancesStatus = instanceStatus.ToArray();
+            nodeStatus.InstancesStatus = instancesStatus.ToArray();
 
             if (OnStatusUpdate != null)
             {
@@ -190,16 +190,18 @@ namespace SuperSocket.SocketEngine
 
         public int StatusUpdateInterval
         {
-            get { return m_TimerInterval / 1000;}
+            get { return m_TimerInterval / 1000; }
+
             set
             {
-                var newTimeInterval = value * 1000;
-                if (m_TimerInterval == newTimeInterval)
+                var newTimerInterval = value * 1000;
+
+                if (m_TimerInterval == newTimerInterval)
                 {
                     return;
                 }
 
-                m_TimerInterval = newTimeInterval;
+                m_TimerInterval = newTimerInterval;
                 
                 Stop();
                 Start();

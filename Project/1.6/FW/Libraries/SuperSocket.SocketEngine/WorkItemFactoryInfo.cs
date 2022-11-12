@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Metadata;
 using SuperSocket.SocketBase.Provider;
+using SuperSocket.SocketBase.Metadata;
 
 namespace SuperSocket.SocketEngine
 {
-    public class WorkItemFactoryInfo
+    class WorkItemFactoryInfo
     {
         public string ServerType { get; set; }
         
@@ -20,6 +20,5 @@ namespace SuperSocket.SocketEngine
         public ProviderFactoryInfo LogFactory { get; set; }
         
         public ProviderFactoryInfo SocketServerFactory { get; set; }
-        
     }
 }

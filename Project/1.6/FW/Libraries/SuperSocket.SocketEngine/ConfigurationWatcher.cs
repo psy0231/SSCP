@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 
@@ -11,7 +10,7 @@ namespace SuperSocket.SocketEngine
     /// <summary>
     /// The configuration file watcher, it is used for hot configuration updating
     /// </summary>
-    public class ConfigurationWatcher
+    public static class ConfigurationWatcher
     {
         private static FileSystemWatcher m_Watcher;
 
@@ -49,6 +48,7 @@ namespace SuperSocket.SocketEngine
             m_Watcher.Changed += (s, e) =>
             {
                 var filePath = e.FullPath;
+
                 if (!NeedsLoadConfig(filePath))
                 {
                     return;
@@ -95,7 +95,7 @@ namespace SuperSocket.SocketEngine
             {
                 config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 var loggerProvider = bootstrap as ILoggerProvider;
 

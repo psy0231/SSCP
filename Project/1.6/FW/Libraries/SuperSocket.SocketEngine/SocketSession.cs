@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -15,11 +14,11 @@ namespace SuperSocket.SocketEngine
     static class SocketState
     {
         public const int Normal = 0;//0000 0000
-        public const int InClosing = 16;//0001 0000 >= 16
+        public const int InClosing = 16;//0001 0000  >= 16
         public const int Closed = 16777216;//256 * 256 * 256; 0x01 0x00 0x00 0x00
-        public const int InSending = 1;//0000 0001 > 1
-        public const int InReceiving = 2; //0000 0010 > 2
-        public const int InSendingReceivingMask = -4;// ~(InSending | InReceiving); 0x0f 0xff 0xff 0xff
+        public const int InSending = 1;//0000 0001  > 1
+        public const int InReceiving = 2;//0000 0010 > 2
+        public const int InSendingReceivingMask = -4;// ~(InSending | InReceiving); 0xf0 0xff 0xff 0xff
     }
 
     /// <summary>
@@ -34,7 +33,7 @@ namespace SuperSocket.SocketEngine
         //0x00 0x00 0x00 0x00
         //1st byte: Closed(Y/N) - 0x01
         //2nd byte: N/A
-        //3th byte: N/A
+        //3th byte: CloseReason
         //Last byte: 0000 0000 - normal state
         //0000 0001: in sending
         //0000 0010: in receiving
@@ -48,9 +47,10 @@ namespace SuperSocket.SocketEngine
 
         private bool AddStateFlag(int stateValue, bool notClosing)
         {
-            while (true)
+            while(true)
             {
                 var oldState = m_State;
+
                 if (notClosing)
                 {
                     // don't update the state if the connection has entered the closing procedure
@@ -61,7 +61,8 @@ namespace SuperSocket.SocketEngine
                 }
 
                 var newState = m_State | stateValue;
-                if (Interlocked.CompareExchange(ref m_State, newState, oldState) == oldState)
+
+                if(Interlocked.CompareExchange(ref m_State, newState, oldState) == oldState)
                 {
                     return true;
                 }
@@ -75,12 +76,14 @@ namespace SuperSocket.SocketEngine
                 var oldState = m_State;
                 var newState = m_State | stateValue;
 
+                //Already marked
                 if (oldState == newState)
                 {
                     return false;
                 }
 
                 var compareState = Interlocked.CompareExchange(ref m_State, newState, oldState);
+
                 if (compareState == oldState)
                 {
                     return true;
@@ -90,12 +93,12 @@ namespace SuperSocket.SocketEngine
 
         private void RemoveStateFlag(int stateValue)
         {
-            while (true)
+            while(true)
             {
                 var oldState = m_State;
                 var newState = m_State & (~stateValue);
 
-                if (Interlocked.CompareExchange(ref m_State, newState, oldState) == oldState)
+                if(Interlocked.CompareExchange(ref m_State, newState, oldState) == oldState)
                 {
                     return;
                 }
@@ -120,8 +123,8 @@ namespace SuperSocket.SocketEngine
             }
 
             m_Client = client;
-            LocalEndPoint = (IPEndPoint) client.LocalEndPoint;
-            RemoteEndPoint = (IPEndPoint) client.RemoteEndPoint;
+            LocalEndPoint = (IPEndPoint)client.LocalEndPoint;
+            RemoteEndPoint = (IPEndPoint)client.RemoteEndPoint;
         }
 
         public SocketSession(string sessionID)
@@ -132,12 +135,12 @@ namespace SuperSocket.SocketEngine
         public virtual void Initialize(IAppSession appSession)
         {
             AppSession = appSession;
-            Config = AppSession.Config;
+            Config = appSession.Config;
             SyncSend = Config.SyncSend;
 
             if (m_SendingQueuePool == null)
             {
-                m_SendingQueuePool = ((SocketServerBase) ((ISocketServerAccessor) appSession.AppServer).SocketServer).SendingQueuePool;
+                m_SendingQueuePool = ((SocketServerBase)((ISocketServerAccessor)appSession.AppServer).SocketServer).SendingQueuePool;
             }
 
             SendingQueue queue;
@@ -179,7 +182,7 @@ namespace SuperSocket.SocketEngine
         /// <summary>
         /// Called when [close].
         /// </summary>
-        protected virtual void OnClosed(CloseReason reson)
+        protected virtual void OnClosed(CloseReason reason)
         {
             //Already closed
             if (!TryAddStateFlag(SocketState.Closed))
@@ -187,6 +190,7 @@ namespace SuperSocket.SocketEngine
                 return;
             }
 
+            //Before changing m_SendingQueue, must check m_IsClosed
             while (true)
             {
                 var sendingQueue = m_SendingQueue;
@@ -208,7 +212,7 @@ namespace SuperSocket.SocketEngine
             var closedHandler = Closed;
             if (closedHandler != null)
             {
-                closedHandler(this, reson);
+                closedHandler(this, reason);
             }
         }
 
@@ -355,7 +359,7 @@ namespace SuperSocket.SocketEngine
                 else
                 {
                     OnSendEnd(CloseReason.InternalError, true);
-                    AppSession.Logger.Error("failed to switch the sending queue.");
+                    AppSession.Logger.Error("Failed to switch the sending queue.");
                 }
 
                 return;
@@ -473,7 +477,7 @@ namespace SuperSocket.SocketEngine
         protected virtual bool TryValidateClosedBySocket(out Socket socket)
         {
             socket = m_Client;
-            //Alreadt closed/closing
+            //Already closed/closing
             return socket == null;
         }
         
@@ -501,7 +505,7 @@ namespace SuperSocket.SocketEngine
                 return;
             }
             
-            //In the udp mode, we meedn't close the socket instance
+            // In the udp mode, we needn't close the socket instance
             if (client != null)
             {
                 InternalClose(client, reason, true);
@@ -538,12 +542,12 @@ namespace SuperSocket.SocketEngine
         }
 
         // the receive action won't be started for this connection any more
-
         protected void OnReceiveTerminated(CloseReason closeReason)
         {
             OnReceiveEnded();
             ValidateClosed(closeReason, true);
         }
+
 
         // return false if the connection has entered the closing procedure or has closed already
         protected bool OnReceiveStarted()
@@ -553,6 +557,7 @@ namespace SuperSocket.SocketEngine
                 return true;
             }
 
+            // the connection is in closing
             ValidateClosed(CloseReason.Unknown, false);
             return false;
         }
@@ -597,7 +602,7 @@ namespace SuperSocket.SocketEngine
 
         private void ValidateClosed()
         {
-            //CloseReason.Unknown won't be used
+            // CloseReason.Unknown won't be used
             ValidateClosed(CloseReason.Unknown, false);
         }
 
@@ -633,7 +638,7 @@ namespace SuperSocket.SocketEngine
                                 {
                                     InternalClose(client, GetCloseReasonFromState(), false);
                                 }
-                                else// the UDP mode, the socket instance always is null, fire the closed event directly
+                                else// The UDP mode, the socket instance always is null, fire the closed event directly
                                 {
                                     FireCloseEvent();
                                 }
@@ -649,7 +654,8 @@ namespace SuperSocket.SocketEngine
                     {
                         FireCloseEvent();
                     }
-                }else if (forceClose)
+                }
+                else if (forceClose)
                 {
                     Close(closeReason);
                 }
@@ -660,12 +666,12 @@ namespace SuperSocket.SocketEngine
 
         protected virtual bool IsIgnorableSocketError(int socketErrorCode)
         {
-            if (socketErrorCode == 10004
-                || socketErrorCode == 10053
-                || socketErrorCode == 10054
-                || socketErrorCode == 10058
-                || socketErrorCode == 10060
-                || socketErrorCode == 995
+            if (socketErrorCode == 10004 //Interrupted
+                || socketErrorCode == 10053 //ConnectionAborted
+                || socketErrorCode == 10054 //ConnectionReset
+                || socketErrorCode == 10058 //Shutdown
+                || socketErrorCode == 10060 //TimedOut
+                || socketErrorCode == 995 //OperationAborted
                 || socketErrorCode == -1073741299)
             {
                 return true;

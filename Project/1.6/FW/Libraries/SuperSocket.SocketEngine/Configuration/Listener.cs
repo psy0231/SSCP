@@ -1,6 +1,6 @@
-﻿using System.Configuration;
+﻿using SuperSocket.SocketBase.Config;
+using System.Configuration;
 using SuperSocket.Common;
-using SuperSocket.SocketBase.Config;
 
 namespace SuperSocket.SocketEngine.Configuration
 {
@@ -24,7 +24,7 @@ namespace SuperSocket.SocketEngine.Configuration
         [ConfigurationProperty("port", IsRequired = true)]
         public int Port
         {
-            get{ return (int)this["port"]; }
+            get { return (int)this["port"]; }
         }
 
         /// <summary>

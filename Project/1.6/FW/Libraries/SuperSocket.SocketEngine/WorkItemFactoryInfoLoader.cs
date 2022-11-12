@@ -7,18 +7,18 @@ using SuperSocket.SocketBase.Provider;
 
 namespace SuperSocket.SocketEngine
 {
-    public class WorkItemFactoryInfoLoader : IDisposable
+    class WorkItemFactoryInfoLoader : IDisposable
     {
         private ProviderFactoryInfo m_DefaultLogFactory;
 
         private IConfigurationSource m_Config;
         
-        public WorkItemFactoryInfoLoader(IConfigurationSource config, ILogFactory passwdInLogFactory)
+        public WorkItemFactoryInfoLoader(IConfigurationSource config, ILogFactory passedInLogFactory)
             : this(config)
         {
-            if (passwdInLogFactory != null)
+            if (passedInLogFactory != null)
             {
-                m_DefaultLogFactory = new ProviderFactoryInfo(ProviderKey.LogFactory, string.Empty, passwdInLogFactory);
+                m_DefaultLogFactory = new ProviderFactoryInfo(ProviderKey.LogFactory, string.Empty, passedInLogFactory);
             }
         }
         
@@ -44,12 +44,12 @@ namespace SuperSocket.SocketEngine
 
             if (m_Config.LogFactories != null && m_Config.LogFactories.Count() > 0)
             {
-                var logconfig = m_Config.LogFactories.FirstOrDefault( f=>
+                var logConfig = m_Config.LogFactories.FirstOrDefault(f =>
                     f.Name.Equals(m_Config.LogFactory, StringComparison.OrdinalIgnoreCase));
 
-                if (logconfig != null)
+                if (logConfig != null)
                 {
-                    factory = new ProviderFactoryInfo(ProviderKey.LogFactory, m_Config.LogFactory, ValidateProviderType(logconfig.Type));
+                    factory = new ProviderFactoryInfo(ProviderKey.LogFactory, m_Config.LogFactory, ValidateProviderType(logConfig.Type));
                 }
             }
 
@@ -72,15 +72,16 @@ namespace SuperSocket.SocketEngine
             //Initialize server types
             var serverTypeFactories = InitializeProviderFactories(ProviderKey.ServerType, m_Config.ServerTypes);
             
-            //Initialize connection fileters
+            //Initialize connection filters
             var connectionFilterFactories = InitializeProviderFactories(ProviderKey.ConnectionFilter, m_Config.ConnectionFilters);
             
             //Initialize log factories
             var logFactoryFactories = InitializeProviderFactories(ProviderKey.LogFactory, m_Config.LogFactories, m_DefaultLogFactory);
             
-            //Initialize Receive fileter factories
+            //Initialize Receive filter factories
             var receiveFilterFactories = InitializeProviderFactories(ProviderKey.ReceiveFilterFactory, m_Config.ReceiveFilterFactories);
             
+
             //Initialize command loader factories
             var commandLoaderFactories = InitializeProviderFactories(ProviderKey.CommandLoader, m_Config.CommandLoaders);
             
@@ -122,7 +123,7 @@ namespace SuperSocket.SocketEngine
                 workItemFactory.ServerType = serverType;
                 
                 var serverTypeMeta = GetServerTypeMetadata(serverType);
-                if (serverType != null)
+                if (serverTypeMeta != null)
                 {
                     workItemFactory.StatusInfoMetadata = serverTypeMeta.StatusInfoMetadata;
                     workItemFactory.IsServerManager = serverTypeMeta.IsServerManager;
@@ -135,7 +136,7 @@ namespace SuperSocket.SocketEngine
                 factories.Add(workItemFactory.SocketServerFactory);
                 
                 //Initialize connection filters
-                if (!string.IsNullOrEmpty(serverConfig.ConnectionFilter))
+                if(!string.IsNullOrEmpty(serverConfig.ConnectionFilter))
                 {
                     var currentFactories = GetSelectedFactories(connectionFilterFactories, serverConfig.ConnectionFilter);
 
@@ -183,7 +184,7 @@ namespace SuperSocket.SocketEngine
                     }
                 }
 
-                if (workItemFactory.LogFactory !=null)
+                if (workItemFactory.LogFactory != null)
                 {
                     factories.Add(workItemFactory.LogFactory);
                 }
@@ -232,7 +233,7 @@ namespace SuperSocket.SocketEngine
         {
             var loadedFactoryPassedIn = false;
 
-            if (loadedFactory != null && !string.IsNullOrEmpty(loadedFactory.Name))
+            if(loadedFactory != null && !string.IsNullOrEmpty(loadedFactory.Name))
             {
                 loadedFactoryPassedIn = true;
             }
@@ -261,15 +262,29 @@ namespace SuperSocket.SocketEngine
             return factories;
         }
 
+        /// <summary>
+        /// Validates the type of the provider, needn't validate in default mode, because it will be validate later when initializing.
+        /// </summary>
+        /// <param name="typeName">Name of the type.</param>
+        /// <returns></returns>
         protected virtual string ValidateProviderType(string typeName)
         {
             return typeName;
         }
         
-        protected virtual  ServerTypeMetadata GetServerTypeMetadata(string serverTypeName)
+        /// <summary>
+        /// Gets the app server type's metadata, the return value is not required in this mode.
+        /// </summary>
+        /// <param name="typeName">Name of the type.</param>
+        /// <returns></returns>
+        protected virtual ServerTypeMetadata GetServerTypeMetadata(string typeName)
         {
             return null;
         }
+        
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public virtual void Dispose()
         {
             

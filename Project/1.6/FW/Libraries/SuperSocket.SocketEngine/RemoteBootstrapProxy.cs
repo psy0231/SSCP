@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
-using SuperSocket.SocketBase.Metadata;
-using SuperSocket.SocketBase.Provider;
 
 namespace SuperSocket.SocketEngine
 {
-    public class RemoteBootstrapProxy : MarshalByRefObject, IBootstrap
+    class RemoteBootstrapProxy : MarshalByRefObject, IBootstrap
     {
         class ServerProxy : MarshalByRefObject, IWorkItem
         {
-
             private IWorkItem m_Server;
 
             public ServerProxy(IWorkItem server)
@@ -21,7 +17,7 @@ namespace SuperSocket.SocketEngine
                 m_Server = server;
             }
             
-            public bool Setup(IBootstrap bootstrap, IServerConfig config, ProviderFactoryInfo[] factories)
+            public bool Setup(IBootstrap bootstrap, IServerConfig config, SocketBase.Provider.ProviderFactoryInfo[] factories)
             {
                 throw new NotSupportedException();
             }
@@ -56,7 +52,7 @@ namespace SuperSocket.SocketEngine
                 get { throw new NotSupportedException(); }
             }        
             
-            public StatusInfoAttribute[] GetServerStatusMetadata()
+            public SocketBase.Metadata.StatusInfoAttribute[] GetServerStatusMetadata()
             {
                 throw new NotSupportedException();
             }
@@ -116,7 +112,7 @@ namespace SuperSocket.SocketEngine
             throw new NotSupportedException();
         }
 
-        public bool Initialize(IDictionary<string, IPEndPoint> listenEndPointReplacement)
+        public bool Initialize(IDictionary<string, System.Net.IPEndPoint> listenEndPointReplacement)
         {
             throw new NotSupportedException();
         }
@@ -158,7 +154,7 @@ namespace SuperSocket.SocketEngine
 
         public override object InitializeLifetimeService()
         {
-            //Never Expire
+            //Never expire
             return null;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Protocol;
+using SuperSocket.SocketBase.Config;
 
 namespace SuperSocket.SocketEngine
 {
@@ -38,11 +38,11 @@ namespace SuperSocket.SocketEngine
                 throw new ArgumentNullException("config");
             }
 
-            switch (config.Mode)
+            switch(config.Mode)
             {
-                case (SocketMode.Tcp):
+                case(SocketMode.Tcp):
                     return new AsyncSocketServer(appServer, listeners);
-                case (SocketMode.Udp):
+                case(SocketMode.Udp):
                     return new UdpSocketServer<TRequestInfo>(appServer, listeners);
                 default:
                     throw new NotSupportedException("Unsupported SocketMode:" + config.Mode);

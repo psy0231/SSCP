@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Net;
-using System.Net.Sockets;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
+using System.Net.Sockets;
+using System.Net;
 
 namespace SuperSocket.SocketEngine
 {
-    public delegate void ErrorHandler(ISocketListener listener, Exception e);
+    delegate void ErrorHandler(ISocketListener listener, Exception e);
 
-    public delegate void NewClientAcceptHandler(ISocketListener listener, Socket client, object state);
+    delegate void NewClientAcceptHandler(ISocketListener listener, Socket client, object state);
     
     /// <summary>
     /// The interface for socket listener
     /// </summary>
-    public interface ISocketListener
+    interface ISocketListener
     {
         /// <summary>
         /// Gets the info of listener

@@ -1,23 +1,21 @@
-﻿using SuperSocket.Common;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Logging;
-using SuperSocket.SocketBase.Metadata;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Net;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
+using SuperSocket.Common;
+using SuperSocket.SocketBase;
+using SuperSocket.SocketBase.Config;
+using SuperSocket.SocketBase.Logging;
+using SuperSocket.SocketBase.Metadata;
 
 namespace SuperSocket.SocketEngine
 {
     class AppDomainWorkItemFactoryInfoLoader : WorkItemFactoryInfoLoader
     {
-        public AppDomainWorkItemFactoryInfoLoader(IConfigurationSource config, ILogFactory passwdInLogFactory) 
-            : base(config, passwdInLogFactory)
+        public AppDomainWorkItemFactoryInfoLoader(IConfigurationSource config, ILogFactory passedInLogFactory) 
+            : base(config, passedInLogFactory)
         {
             InitializeValidationAppDomain();
         }
@@ -34,7 +32,7 @@ namespace SuperSocket.SocketEngine
 
         private void InitializeValidationAppDomain()
         {
-            m_ValidationAppDomain = AppDomain.CreateDomain("ValidationDomain", AppDomain.CurrentDomain.Evidence, AppDomain.CurrentDomain.BaseDirectory, String.Empty, false);
+            m_ValidationAppDomain = AppDomain.CreateDomain("ValidationDomain", AppDomain.CurrentDomain.Evidence, AppDomain.CurrentDomain.BaseDirectory, string.Empty, false);
 
             var validatorType = typeof(TypeValidator);
             m_Validator = (TypeValidator)m_ValidationAppDomain.CreateInstanceAndUnwrap(validatorType.Assembly.FullName, validatorType.FullName);
@@ -44,8 +42,9 @@ namespace SuperSocket.SocketEngine
         {
             if (!m_Validator.ValidateTypeName(typeName))
             {
-                throw new Exception(String.Format("Failed to load type {0}!", typeName));
+                throw new Exception(string.Format("Failed to load type {0}!", typeName));
             }
+
             return typeName;
         }
 
@@ -61,6 +60,7 @@ namespace SuperSocket.SocketEngine
                 AppDomain.Unload(m_ValidationAppDomain);
                 m_ValidationAppDomain = null;
             }
+
             base.Dispose();
         }
     }
@@ -128,6 +128,7 @@ namespace SuperSocket.SocketEngine
             get
             {
                 var loggerProvider = m_InnerBootstrap as ILoggerProvider;
+
                 if (loggerProvider == null)
                 {
                     return null;
@@ -135,7 +136,6 @@ namespace SuperSocket.SocketEngine
                 return loggerProvider.Logger;
             }
         }
-
         /// <summary>
         /// Gets the startup config file.
         /// </summary>
@@ -166,11 +166,13 @@ namespace SuperSocket.SocketEngine
                 startupConfigFile = configSectionSource.GetConfigSource();
             }
 
-            if (!config.GetType().IsSerializable)
+            //Keep serializable version of configuration
+            if(!config.GetType().IsSerializable)
             {
                 config = new ConfigurationSource(config);
             }
 
+            //Still use raw configuration type to bootstrap
             m_InnerBootstrap = CreateBootstrapWrap(this, config, startupConfigFile);
 
             AppDomain.CurrentDomain.SetData("Bootstrap", this);
@@ -215,7 +217,7 @@ namespace SuperSocket.SocketEngine
         /// </summary>
         /// <param name="listenEndPointReplacement">The listen end point replacement.</param>
         /// <returns></returns>
-        public bool Initialize(IDictionary<string, IPEndPoint> listenEndPointReplacement)
+        public bool Initialize(IDictionary<string, System.Net.IPEndPoint> listenEndPointReplacement)
         {
             return m_InnerBootstrap.Initialize(listenEndPointReplacement);
         }
@@ -230,8 +232,9 @@ namespace SuperSocket.SocketEngine
         {
             if (logFactory != null)
             {
-                throw new Exception("You cannot pass in logFactory, if isolation level is AppDOmain!");
+                throw new Exception("You cannot pass in logFactory, if your isolation level is AppDomain!");
             }
+            
             return m_InnerBootstrap.Initialize(serverConfigResolver, logFactory);
         }
 

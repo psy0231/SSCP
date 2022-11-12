@@ -60,7 +60,7 @@ namespace SuperSocket.SocketEngine
 
             SendingQueuePool = sendingQueuePool;
 
-            for (int i = 0; i < ListenerInfos.Length; i++)
+            for (var i = 0; i < ListenerInfos.Length; i++)
             {
                 var listener = CreateListener(ListenerInfos[i]);
                 listener.Error += new ErrorHandler(OnListenerError);
@@ -83,7 +83,7 @@ namespace SuperSocket.SocketEngine
                         log.DebugFormat("Listener ({0}) failed to start", listener.EndPoint);
                     }
 
-                    for (int j = 0; j < Listeners.Count; j++)
+                    for (var j = 0; j < Listeners.Count; j++)
                     {
                         Listeners[j].Stop();
                     }
@@ -103,7 +103,7 @@ namespace SuperSocket.SocketEngine
         {
             var logger = this.AppServer.Logger;
 
-            if (!logger.IsErrorEnabled)
+            if(!logger.IsErrorEnabled)
             {
                 return;
             }
@@ -111,7 +111,6 @@ namespace SuperSocket.SocketEngine
             logger.Error(string.Format("Listener ({0}) error: {1}", listener.EndPoint, e.Message), e);
 
         }
-
 
         void OnListenerStopped(object sender, EventArgs e)
         {
@@ -131,7 +130,7 @@ namespace SuperSocket.SocketEngine
         {
             IsStopped = true;
 
-            for (int i = 0; i < Listeners.Count; i++)
+            for (var i = 0; i < Listeners.Count; i++)
             {
                 var listener = Listeners[i];
                 
@@ -145,7 +144,7 @@ namespace SuperSocket.SocketEngine
             IsRunning = false;
         }
 
-        #region IDisposable Member
+        #region IDisposable Members
 
         public void Dispose()
         {

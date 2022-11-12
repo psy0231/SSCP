@@ -7,7 +7,7 @@ namespace SuperSocket.SocketEngine
     /// <summary>
     /// IRemoteWorkItem
     /// </summary>
-    public interface IRemoteWorkItem : IWorkItemBase,  IStatusInfoSource
+    public interface IRemoteWorkItem : IWorkItemBase, IStatusInfoSource
     {
         /// <summary>
         /// Setups the specified config.
@@ -19,6 +19,6 @@ namespace SuperSocket.SocketEngine
         /// <param name="factories">The factories.</param>
         /// <param name="startupConfigFile">The startup configuration file path</param>
         /// <returns></returns>
-        bool Setup(string serverType, string bootstrapUri, string assemblyImportRoot, IServerConfig config, ProviderFactoryInfo[] factories, string startConfigFile);
+        bool Setup(string serverType, string bootstrapUri, string assemblyImportRoot, IServerConfig config, ProviderFactoryInfo[] factories, string startupConfigFile);
     }
 }

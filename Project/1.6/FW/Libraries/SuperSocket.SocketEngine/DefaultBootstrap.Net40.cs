@@ -1,14 +1,12 @@
-﻿using SuperSocket.Common;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketEngine.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
-using System.Threading.Tasks;
+using SuperSocket.Common;
+using SuperSocket.SocketBase;
+using SuperSocket.SocketBase.Config;
+using SuperSocket.SocketEngine.Configuration;
 
 namespace SuperSocket.SocketEngine
 {
@@ -20,15 +18,18 @@ namespace SuperSocket.SocketEngine
             {
                 throw new ArgumentNullException("config");
             }
+
             if (string.IsNullOrEmpty(config.Name))
             {
                 throw new ArgumentException("The new server's name cannot be empty.", "config");
             }
+
             if (!m_Initialized)
             {
                 throw new Exception("The bootstrap must be initialized already!");
             }
-            if (m_AppServers.Any(s=> config.Name.Equals(s.Name, StringComparison.OrdinalIgnoreCase)))
+
+            if (m_AppServers.Any(s => config.Name.Equals(s.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 m_GlobalLog.ErrorFormat("The new server's name '{0}' has been taken by another server.", config.Name);
             }
@@ -38,7 +39,7 @@ namespace SuperSocket.SocketEngine
 
             IEnumerable<WorkItemFactoryInfo> workItemFactories;
 
-            using (var factoryInfoLoader  = GetWorkItemFactoryInfoLoader(configSource, null))
+            using (var factoryInfoLoader = GetWorkItemFactoryInfoLoader(configSource, null))
             {
                 try
                 {
@@ -50,6 +51,7 @@ namespace SuperSocket.SocketEngine
                     {
                         m_GlobalLog.Error(e);
                     }
+
                     return null;
                 }
             }
@@ -80,6 +82,7 @@ namespace SuperSocket.SocketEngine
 
             return server;
         }
+
         bool IDynamicBootstrap.Add(IServerConfig config)
         {
             var newWorkItem = AddNewServer(config);
@@ -109,7 +112,7 @@ namespace SuperSocket.SocketEngine
 
             if (server == null)
             {
-                throw new Exception("The server is not foune");
+                throw new Exception("The server is not found.");
             }
 
             if (server.State != ServerState.NotStarted)
@@ -123,7 +126,7 @@ namespace SuperSocket.SocketEngine
 
             var section = m_Config as SocketServiceConfig;
 
-            if (section != null)
+            if (section != null) //file configuration
             {
                 section.Servers.Remove(name);
                 ConfigurationWatcher.Pause();

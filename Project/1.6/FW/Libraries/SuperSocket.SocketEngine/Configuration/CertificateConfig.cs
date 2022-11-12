@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
-using System.Security.Cryptography.X509Certificates;
 using SuperSocket.SocketBase.Config;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SuperSocket.SocketEngine.Configuration
 {
@@ -9,7 +9,7 @@ namespace SuperSocket.SocketEngine.Configuration
     /// </summary>
     public class CertificateConfig : ConfigurationElement, ICertificateConfig
     {
-        #region ICertificateConfig Memvers
+        #region ICertificateConfig Members
         
         /// <summary>
         /// Gets the certificate file path.
@@ -41,7 +41,6 @@ namespace SuperSocket.SocketEngine.Configuration
         /// <value>
         /// The name of the store.
         /// </value>
-
         [ConfigurationProperty("storeName", IsRequired = false)]
         public string StoreName 
         {
@@ -58,7 +57,13 @@ namespace SuperSocket.SocketEngine.Configuration
         /// The store location.
         /// </value>
         [ConfigurationProperty("storeLocation", IsRequired = false, DefaultValue = "CurrentUser")]
-        public StoreLocation StoreLocation { get; }
+        public StoreLocation StoreLocation 
+        { 
+            get
+            {
+                return (StoreLocation)this["storeLocation"];
+            }
+        }
 
         /// <summary>
         /// Gets the thumbprint.
@@ -90,15 +95,15 @@ namespace SuperSocket.SocketEngine.Configuration
         /// <summary>
         /// Gets a value that will be used to instantiate the X509Certificate2 object in the CertificateManager
         /// </summary>
+        [ConfigurationProperty("keyStorageFlags", IsRequired = false, DefaultValue = X509KeyStorageFlags.DefaultKeySet)]
         public X509KeyStorageFlags KeyStorageFlags
         {
             get
             {
-                return (X509KeyStorageFlags)this["keyStoreFlags"];
+                return (X509KeyStorageFlags)this["keyStorageFlags"];
             }
         }
         
         #endregion ICertificateConfig Members
-        
     }
 }

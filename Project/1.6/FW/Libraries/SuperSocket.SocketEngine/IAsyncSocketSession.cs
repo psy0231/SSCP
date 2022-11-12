@@ -4,14 +4,14 @@ using SuperSocket.SocketEngine.AsyncSocket;
 
 namespace SuperSocket.SocketEngine
 {
-    public interface IAsyncSocketSessionBase : ILoggerProvider
+    interface IAsyncSocketSessionBase : ILoggerProvider
     {
         SocketAsyncEventArgsProxy SocketAsyncProxy { get; }
         
         Socket Client { get; }
     }
 
-    public interface IAsyncSocketSession : IAsyncSocketSessionBase
+    interface IAsyncSocketSession : IAsyncSocketSessionBase
     {
         void ProcessReceive(SocketAsyncEventArgs e);
     }

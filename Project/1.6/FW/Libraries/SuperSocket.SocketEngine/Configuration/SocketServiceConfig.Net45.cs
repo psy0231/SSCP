@@ -15,7 +15,6 @@ namespace SuperSocket.SocketEngine.Configuration
         /// The default culture.
         /// </value>
         [ConfigurationProperty("defaultCulture", IsRequired = false)]
-
         public string DefaultCulture
         {
             get
@@ -23,6 +22,5 @@ namespace SuperSocket.SocketEngine.Configuration
                 return (string)this["defaultCulture"];
             }
         }
-
     }
 }

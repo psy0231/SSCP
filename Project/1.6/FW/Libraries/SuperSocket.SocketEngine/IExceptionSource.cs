@@ -1,9 +1,9 @@
 ﻿using System;
-using ErrorEventArgs = SuperSocket.Common.ErrorEventArgs;
+using SuperSocket.Common;
 
 namespace SuperSocket.SocketEngine
 {
-    public interface IExceptionSource
+    interface IExceptionSource
     {
         event EventHandler<ErrorEventArgs> ExceptionThrown;
     }

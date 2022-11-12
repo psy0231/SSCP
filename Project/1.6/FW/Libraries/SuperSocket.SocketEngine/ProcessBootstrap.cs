@@ -7,9 +7,9 @@ using SuperSocket.SocketBase.Metadata;
 
 namespace SuperSocket.SocketEngine
 {
-    class DefaultBootstrapProcessWarp : DefaultBootstrapAppDomainWrap
+    class DefaultBootstrapProcessWrap : DefaultBootstrapAppDomainWrap
     {
-        public DefaultBootstrapProcessWarp(IBootstrap bootstrap, IConfigurationSource config, string startupConfigFile) 
+        public DefaultBootstrapProcessWrap(IBootstrap bootstrap, IConfigurationSource config, string startupConfigFile) 
             : base(bootstrap, config, startupConfigFile)
         {
             
@@ -23,12 +23,16 @@ namespace SuperSocket.SocketEngine
     
     class ProcessBootstrap : AppDomainBootstrap
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProcessBootstrap" /> class.
+        /// </summary>
+        /// <param name="config">The config.</param>
         public ProcessBootstrap(IConfigurationSource config) 
             : base(config)
         {
             var clientChannel = ChannelServices.RegisteredChannels.FirstOrDefault(c => c is IpcClientChannel);
 
-            if (clientChannel == null)
+            if(clientChannel == null)
             {
                 // Create the channel.
                 clientChannel = new IpcClientChannel();
@@ -39,7 +43,7 @@ namespace SuperSocket.SocketEngine
 
         protected override IBootstrap CreateBootstrapWrap(IBootstrap bootstrap, IConfigurationSource config, string startupConfigFile)
         {
-            return new DefaultBootstrapProcessWarp(bootstrap, config, startupConfigFile);
+            return new DefaultBootstrapProcessWrap(bootstrap, config, startupConfigFile);
         }
     }
 }

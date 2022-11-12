@@ -1,5 +1,5 @@
-﻿using System;
-using SuperSocket.SocketBase;
+﻿using SuperSocket.SocketBase;
+using System;
 
 namespace SuperSocket.SocketEngine
 {

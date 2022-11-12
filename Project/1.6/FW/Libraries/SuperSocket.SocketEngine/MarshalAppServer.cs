@@ -1,12 +1,12 @@
 ﻿using System;
 using SuperSocket.SocketBase;
+using SuperSocket.SocketBase.Provider;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Metadata;
-using SuperSocket.SocketBase.Provider;
 
 namespace SuperSocket.SocketEngine
 {
-    public class MarshalAppServer : MarshalByRefObject, IWorkItem, IStatusInfoSource
+    class MarshalAppServer : MarshalByRefObject, IWorkItem, IStatusInfoSource
     {
         private IWorkItem m_AppServer;
 
@@ -53,10 +53,11 @@ namespace SuperSocket.SocketEngine
         {
             get
             {
-                if (m_AppServer == null)
+                if(m_AppServer == null)
                 {
                     return null;
                 }
+
                 return m_AppServer.Config;
             }
         }
@@ -109,7 +110,7 @@ namespace SuperSocket.SocketEngine
         /// </summary>
         public int SessionCount
         {
-            get{ return m_AppServer.SessionCount; }
+            get { return m_AppServer.SessionCount; }
         }
 
         StatusInfoAttribute[] IStatusInfoSource.GetServerStatusMetadata()

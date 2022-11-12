@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using SuperSocket.Common;
@@ -15,7 +14,7 @@ namespace SuperSocket.SocketEngine
         private readonly int m_ReceiveBufferSize;
         private readonly int m_SendBufferSize;
 
-        protected TcpSocketServerBase(IAppServer appServer, ListenerInfo[] listeners) 
+        public TcpSocketServerBase(IAppServer appServer, ListenerInfo[] listeners) 
             : base(appServer, listeners)
         {
             var config = appServer.Config;

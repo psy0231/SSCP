@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Configuration;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
+using System.Configuration;
 
 namespace SuperSocket.SocketEngine
 {
@@ -39,6 +39,10 @@ namespace SuperSocket.SocketEngine
             return bootstrap;
         }
 
+        /// <summary>
+        /// Creates the bootstrap from app configuration's socketServer section.
+        /// </summary>
+        /// <returns></returns>
         public static IBootstrap CreateBootstrap()
         {
             var configSection = ConfigurationManager.GetSection("superSocket");
@@ -48,13 +52,13 @@ namespace SuperSocket.SocketEngine
                 configSection = ConfigurationManager.GetSection("socketServer");
             }
 
-            if (configSection == null)
+            if(configSection == null)
             {
-                throw new ConfigurationErrorsException("Missing 'superSocket' of 'socketServer' configuration section");
+                throw new ConfigurationErrorsException("Missing 'superSocket' or 'socketServer' configuration section.");
             }
 
             var configSource = configSection as IConfigurationSource;
-            if (configSource == null)
+            if(configSource == null)
             {
                 throw new ConfigurationErrorsException("Invalid 'superSocket' or 'socketServer' configuration section.");
             }
@@ -62,6 +66,11 @@ namespace SuperSocket.SocketEngine
             return CreateBootstrap(configSource);
         }
 
+        /// <summary>
+        /// Creates the bootstrap.
+        /// </summary>
+        /// <param name="configSectionName">Name of the config section.</param>
+        /// <returns></returns>
         public static IBootstrap CreateBootstrap(string configSectionName)
         {
             var configSource = ConfigurationManager.GetSection(configSectionName) as IConfigurationSource;
@@ -74,6 +83,11 @@ namespace SuperSocket.SocketEngine
             return CreateBootstrap(configSource);
         }
 
+        /// <summary>
+        /// Creates the bootstrap from configuration file.
+        /// </summary>
+        /// <param name="configFile">The configuration file.</param>
+        /// <returns></returns>
         public static IBootstrap CreateBootstrapFromConfigFile(string configFile)
         {
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();

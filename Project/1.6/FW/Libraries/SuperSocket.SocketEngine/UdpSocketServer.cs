@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using SuperSocket.SocketBase;
@@ -24,7 +23,11 @@ namespace SuperSocket.SocketEngine
 
         private IRequestHandler<TRequestInfo> m_RequestHandler;
         
-        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UdpSocketServer&lt;TRequestInfo&gt;"/> class.
+        /// </summary>
+        /// <param name="appServer">The app server.</param>
+        /// <param name="listeners">The listeners.</param>
         public UdpSocketServer(IAppServer appServer, ListenerInfo[] listeners) 
             : base(appServer, listeners)
         {
@@ -38,6 +41,12 @@ namespace SuperSocket.SocketEngine
             m_UdpRequestFilter = ((IReceiveFilterFactory<TRequestInfo>)appServer.ReceiveFilterFactory).CreateFilter(appServer, null, null);
         }
 
+        /// <summary>
+        /// Called when [new client accepted].
+        /// </summary>
+        /// <param name="listener">The listener.</param>
+        /// <param name="client">The client.</param>
+        /// <param name="state">The state.</param>
         protected override void OnNewClientAccepted(ISocketListener listener, Socket client, object state)
         {
             var paramArray = state as object[];
@@ -100,7 +109,8 @@ namespace SuperSocket.SocketEngine
             return appSession;
         }
 
-        void ProcessPackageWithSessionID(Socket listenSocket, IPEndPoint remoteEndPoint, byte[] receiveData)
+
+        void ProcessPackageWithSessionID(Socket listenSocket, IPEndPoint remoteEndPoint, byte[] receivedData)
         {
             TRequestInfo requestInfo;
 
@@ -110,11 +120,11 @@ namespace SuperSocket.SocketEngine
 
             try
             {
-                requestInfo = this.m_UdpRequestFilter.Filter(receiveData, 0, receiveData.Length, false, out rest);
+                requestInfo = this.m_UdpRequestFilter.Filter(receivedData, 0, receivedData.Length, false, out rest);
             }
             catch (Exception exc)
             {
-                if (AppServer.Logger.IsErrorEnabled)
+                if(AppServer.Logger.IsErrorEnabled)
                 {
                     AppServer.Logger.Error("Failed to parse UDP package!", exc);
                 }
@@ -174,7 +184,7 @@ namespace SuperSocket.SocketEngine
             m_RequestHandler.ExecuteCommand(appSession, requestInfo);
         }
 
-        void ProcessPackageWithoutSessionID(Socket listenSocket, IPEndPoint remoteEndPoint, byte[] receiveData)
+        void ProcessPackageWithoutSessionID(Socket listenSocket, IPEndPoint remoteEndPoint, byte[] receivedData)
         {
             var sessionID = remoteEndPoint.ToString();
             var appSession = AppServer.GetSessionByID(sessionID);
@@ -189,11 +199,11 @@ namespace SuperSocket.SocketEngine
                     return;
                 }
 
-                appSession.ProcessRequest(receiveData, 0, receiveData.Length, false);
+                appSession.ProcessRequest(receivedData, 0, receivedData.Length, false);
             }
             else //Existing session
             {
-                appSession.ProcessRequest(receiveData, 0, receiveData.Length, false);
+                appSession.ProcessRequest(receivedData, 0, receivedData.Length, false);
             }
         }
 
@@ -211,6 +221,7 @@ namespace SuperSocket.SocketEngine
                     AppServer.Logger.ErrorFormat("Cannot accept a new UDP connection from {0}, the max connection number {1} has been exceed!",
                         remoteEndPoint.ToString(), AppServer.Config.MaxConnectionNumber);
                 }
+
                 return false;
             }
             return true;
@@ -221,7 +232,7 @@ namespace SuperSocket.SocketEngine
             return new UdpSocketListener(listenerInfo);
         }
         
-        public override void ResetSessionSecurity(IAppSession session, SslProtocols security)
+        public override void ResetSessionSecurity(IAppSession session, System.Security.Authentication.SslProtocols security)
         {
             throw new NotSupportedException();
         }
@@ -251,7 +262,7 @@ namespace SuperSocket.SocketEngine
             }
             else
             {
-                taskSource.SetResult(new ActiveConnectResult{Result = true, Session = session});
+                taskSource.SetResult(new ActiveConnectResult { Result = true, Session = session });
             }
 
             return taskSource.Task;

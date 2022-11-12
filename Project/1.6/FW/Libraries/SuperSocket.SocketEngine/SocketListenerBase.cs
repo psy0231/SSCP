@@ -37,7 +37,7 @@ namespace SuperSocket.SocketEngine
         {
             var handler = Error;
 
-            if (handler != null)
+            if(handler != null)
             {
                 handler(this, e);
             }

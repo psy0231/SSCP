@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
-using System.Windows.Markup;
 using SuperSocket.Common;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Logging;
@@ -38,10 +37,10 @@ namespace SuperSocket.SocketEngine
         {
             base.Initialize(appSession);
             
-            //Initialoze SocketAsyncProxy for receiving
+            //Initialize SocketAsyncProxy for receiving
             SocketAsyncProxy.Initialize(this);
 
-            if (SyncSend)
+            if (!SyncSend)
             {
                 //Initialize SocketAsyncEventArgs for sending
                 m_SocketEventArgSend = new SocketAsyncEventArgs();
@@ -140,7 +139,7 @@ namespace SuperSocket.SocketEngine
                     e.SetBuffer(predictOffset, Config.ReceiveBufferSize - offsetDelta);
                 }
                 
-                //the connection is closing or closed
+                // the connection is closing or closed
                 if (!OnReceiveStarted())
                 {
                     return;
@@ -161,13 +160,14 @@ namespace SuperSocket.SocketEngine
             }
         }
         
-        protected override void SendAsync(SendingQueue queue)
+        protected override void SendSync(SendingQueue queue)
         {
             try
             {
-                for (int i = 0; i < queue.Count; i++)
+                for (var i = 0; i < queue.Count; i++)
                 {
                     var item = queue[i];
+
                     var client = Client;
 
                     if (client == null)
@@ -189,7 +189,7 @@ namespace SuperSocket.SocketEngine
             }
         }
         
-        protected override void SendSync(SendingQueue queue)
+        protected override void SendAsync(SendingQueue queue)
         {
             try
             {

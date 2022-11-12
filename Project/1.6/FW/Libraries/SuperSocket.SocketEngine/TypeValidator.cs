@@ -1,10 +1,9 @@
-﻿using SuperSocket.Common;
-using SuperSocket.SocketBase;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using SuperSocket.Common;
+using SuperSocket.SocketBase;
 
 namespace SuperSocket.SocketEngine
 {
@@ -20,10 +19,11 @@ namespace SuperSocket.SocketEngine
             {
                 type = AssemblyUtil.GetType(typeName, false, true);
             }
-            catch (Exception)
+            catch
             {
 
             }
+
             return type != null;
         }
 
@@ -33,10 +33,11 @@ namespace SuperSocket.SocketEngine
 
             while (true)
             {
-                if(currentType.FullName == m_ServerManagerTypeName)
+                if (currentType.FullName == m_ServerManagerTypeName)
                 {
                     return true;
                 }
+                
                 if (currentType.BaseType == null)
                 {
                     return false;

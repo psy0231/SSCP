@@ -65,12 +65,12 @@ namespace SuperSocket.SocketEngine.Configuration
         /// <summary>
         /// Gets the logfactory name of the bootstrap.
         /// </summary>
-        [ConfigurationProperty("receiveFIlterFactories", IsRequired = false)]
+        [ConfigurationProperty("receiveFilterFactories", IsRequired = false)]
         public TypeProviderCollection ReceiveFilterFactories
         {
             get
             {
-                return this["receiveFIlterFactories"] as TypeProviderCollection;
+                return this["receiveFilterFactories"] as TypeProviderCollection;
             }
         }
         
@@ -101,12 +101,12 @@ namespace SuperSocket.SocketEngine.Configuration
         /// <summary>
         /// Gets the min working threads.
         /// </summary>
-        [ConfigurationProperty("minWorkingThread", IsRequired = false, DefaultValue = -1)]
+        [ConfigurationProperty("minWorkingThreads", IsRequired = false, DefaultValue = -1)]
         public int MinWorkingThreads
         {
             get
             {
-                return (int)this["minWorkingThread"];
+                return (int)this["minWorkingThreads"];
             }
         }
 
@@ -197,7 +197,7 @@ namespace SuperSocket.SocketEngine.Configuration
         /// true when an unknown element is encountered while deserializing; otherwise, false.
         /// </returns>
         /// <exception cref="T:System.Configuration.ConfigurationErrorsException">The element identified by <paramref name="elementName"/> is locked.- or -One or more of the element's attributes is locked.- or -<paramref name="elementName"/> is unrecognized, or the element has an unrecognized attribute.- or -The element has a Boolean attribute with an invalid value.- or -An attempt was made to deserialize a property more than once.- or -An attempt was made to deserialize a property that is not a valid member of the element.- or -The element cannot contain a CDATA or text element.</exception>
-        protected override bool OnDeserializeUnrecognizedElement(string elementName, XmlReader reader)
+        protected override bool OnDeserializeUnrecognizedElement(string elementName, System.Xml.XmlReader reader)
         {
             //To keep compatible with old configuration
             if (!"services".Equals(elementName, StringComparison.OrdinalIgnoreCase))
@@ -234,7 +234,7 @@ namespace SuperSocket.SocketEngine.Configuration
             const string xmlnsPrefix = "xmlns:";
             const string xsiPrefix = "xsi:";
             
-            //for configuration intellisense, allow these unrecogized attributes: xmlns, xmlns:*, xsi:*
+            //for configuration intellisense, allow these unrecognized attributes: xmlns, xmlns:*, xsi:*
             if (name.Equals(xmlns) || name.StartsWith(xmlnsPrefix) || name.StartsWith(xsiPrefix))
             {
                 return true;
@@ -303,6 +303,5 @@ namespace SuperSocket.SocketEngine.Configuration
                 return this.CommandLoaders;
             }
         }
-        
     }
 }
