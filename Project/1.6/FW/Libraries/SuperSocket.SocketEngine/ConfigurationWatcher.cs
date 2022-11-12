@@ -69,7 +69,7 @@ namespace SuperSocket.SocketEngine
             m_Watcher.EnableRaisingEvents = true;
         }
         
-        internal static void Paese()
+        internal static void Pause()
         {
             m_Watcher.EnableRaisingEvents = false;
         }

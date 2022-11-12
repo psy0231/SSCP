@@ -37,16 +37,19 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainAppServer.cs" />
     <Compile Include="AppDomainAppServer.StatusInfo.cs" />
+    <Compile Include="AppDomainBootstrap.cs" />
     <Compile Include="AssemblyImport.cs" />
     <Compile Include="AsyncSocketServer.cs" />
     <Compile Include="AsyncSocketSession.cs" />
     <Compile Include="AsyncSocket\SocketAsyncEventArgsProxy.cs" />
     <Compile Include="AsyncStreamSocketSession.cs" />
+    <Compile Include="BootstrapFactory.cs" />
     <Compile Include="ConfigurationWatcher.cs" />
     <Compile Include="Configuration\CertificateConfig.cs" />
     <Compile Include="Configuration\CommandAssembly.cs" />
@@ -56,6 +59,9 @@
     <Compile Include="Configuration\ServerCollection.cs" />
     <Compile Include="Configuration\SocketServiceConfig.cs" />
     <Compile Include="Configuration\SocketServiceConfig.Net45.cs" />
+    <Compile Include="DefaultBootstrap.cs" />
+    <Compile Include="DefaultBootstrap.Net40.cs" />
+    <Compile Include="DefaultBootstrap.Net45.cs" />
     <Compile Include="IAsyncSocketSession.cs" />
     <Compile Include="IExceptionSource.cs" />
     <Compile Include="IPerformanceMonitor.cs" />
@@ -65,6 +71,8 @@
     <Compile Include="IsolationAppServer.cs" />
     <Compile Include="MarshalAppServer.cs" />
     <Compile Include="PerformanceMonitor.cs" />
+    <Compile Include="ProcessAppServer.cs" />
+    <Compile Include="ProcessBootstrap.cs" />
     <Compile Include="ProcessLocker.cs" />
     <Compile Include="ProcessPerformanceCounterHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,6 +85,7 @@
     <Compile Include="SocketSession.Net45.cs" />
     <Compile Include="TcpAsyncSocketListener.cs" />
     <Compile Include="TcpSocketServerBase.cs" />
+    <Compile Include="TypeValidator.cs" />
     <Compile Include="UdpSocketListener.cs" />
     <Compile Include="UdpSocketServer.cs" />
     <Compile Include="UdpSocketSession.cs" />
@@ -95,6 +104,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="temp.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppDomainBootstrap.Net40.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

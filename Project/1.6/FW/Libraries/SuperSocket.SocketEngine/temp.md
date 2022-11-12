@@ -49,3 +49,22 @@
 - IsolationAppServer
 - MarshalAppServer
 - AppDomainAppServer
+- TypeValidatot
+- DefaultBootstrap
+  - DefaultBootstrap.net40
+  - DefaultBootstrap.net45
+- AppDomainBootstrap 
+  - AppDomainWorkItemFactoryInfoLoader
+  - DefaultBootstrapAppDomainWrap
+  - AppDomainBootstrap.net40
+- ProcessAppServer
+- ProcessBootstrap
+  - DefaultBootstrapProcessWarp 
+- BootstrapFactory
+--- 
+
+
+- excepted
+  - Extensions.Net35
+  - SocketSession.Net
+  - 

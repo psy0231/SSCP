@@ -61,31 +61,31 @@ namespace SuperSocket.SocketBase.Config
         /// <summary>
         /// Gets the servers definitions.
         /// </summary>
-        public IEnumerable<IServerConfig> Servers { get; }
+        public IEnumerable<IServerConfig> Servers { get; set; }
         
         /// <summary>
         /// Gets/sets the server types definition.
         /// </summary>
-        public IEnumerable<ITypeProvider> ServerTypes { get; }
+        public IEnumerable<ITypeProvider> ServerTypes { get; set; }
      
         /// <summary>
         /// Gets/sets the connection filters definition.
         /// </summary>
-        public IEnumerable<ITypeProvider> ConnectionFilters { get; }
+        public IEnumerable<ITypeProvider> ConnectionFilters { get; set; }
      
         /// <summary>
         /// Gets/sets the log factories definition.
         /// </summary>
-        public IEnumerable<ITypeProvider> LogFactories { get; }
+        public IEnumerable<ITypeProvider> LogFactories { get; set; }
        
         /// <summary>
         /// Gets/sets the Receive filter factories definition.
         /// </summary>
-        public IEnumerable<ITypeProvider> ReceiveFilterFactories { get; }
+        public IEnumerable<ITypeProvider> ReceiveFilterFactories { get; set; }
       
         /// <summary>
         /// Gets/sets the command loaders definition.
         /// </summary>
-        public IEnumerable<ITypeProvider> CommandLoaders { get; }
+        public IEnumerable<ITypeProvider> CommandLoaders { get; set; }
     }
 }

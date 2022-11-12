@@ -270,7 +270,7 @@ namespace SuperSocket.SocketEngine
         {
             return null;
         }
-        public void Dispose()
+        public virtual void Dispose()
         {
             
         }
