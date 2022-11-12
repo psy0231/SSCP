@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocket.Dlr", "Project\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocket.SocketEngine", "Project\1.6\FW\Libraries\SuperSocket.SocketEngine\SuperSocket.SocketEngine.csproj", "{511DC1A7-B076-41DA-8C5D-2FE12044D06D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocket.Agent", "Project\1.6\FW\Libraries\SuperSocket.Agent\SuperSocket.Agent.csproj", "{351A1AB9-875C-4218-89A9-5D9549FAB77E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{511DC1A7-B076-41DA-8C5D-2FE12044D06D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{511DC1A7-B076-41DA-8C5D-2FE12044D06D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{511DC1A7-B076-41DA-8C5D-2FE12044D06D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{351A1AB9-875C-4218-89A9-5D9549FAB77E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{351A1AB9-875C-4218-89A9-5D9549FAB77E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{351A1AB9-875C-4218-89A9-5D9549FAB77E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{351A1AB9-875C-4218-89A9-5D9549FAB77E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +71,7 @@ Global
 		{C0E74099-9E9D-4DE7-B65B-2459008C43E4} = {E62BA387-DC89-44B6-90D4-54D6384FAE08}
 		{8418E93E-E242-4AE0-8E3D-BABB9A05AB6E} = {E62BA387-DC89-44B6-90D4-54D6384FAE08}
 		{511DC1A7-B076-41DA-8C5D-2FE12044D06D} = {E62BA387-DC89-44B6-90D4-54D6384FAE08}
+		{351A1AB9-875C-4218-89A9-5D9549FAB77E} = {E62BA387-DC89-44B6-90D4-54D6384FAE08}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {39549395-9EB6-4FB7-97A0-F532F4D7290D}
