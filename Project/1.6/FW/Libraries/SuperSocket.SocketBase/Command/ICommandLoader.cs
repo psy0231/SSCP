@@ -19,6 +19,7 @@ namespace SuperSocket.SocketBase.Command
     public interface ICommandLoader<TCommand> : ICommandLoader
         where TCommand : ICommand
     {
+        
         /// <summary>
         /// Initializes the command loader by the root config and the server instance.
         /// </summary>

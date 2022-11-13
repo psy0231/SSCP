@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
 
 namespace SuperSocket.Common
@@ -58,6 +55,7 @@ namespace SuperSocket.Common
                     {
                         return index;
                     }
+
                     index++;
                 }
             }
@@ -377,7 +375,7 @@ namespace SuperSocket.Common
         /// <summary>
         /// NotSupported
         /// </summary>
-        IEnumerator IEnumerable.GetEnumerator()
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             throw new NotSupportedException();
         }
@@ -510,7 +508,7 @@ namespace SuperSocket.Common
                 from = startIndex - startSegment.From;
             }
 
-            for (int i = startSegmentIndex; i < m_Segments.Count; i++)
+            for (var i = startSegmentIndex; i < m_Segments.Count; i++)
             {
                 var currentSegment = m_Segments[i];
                 len = Math.Min(currentSegment.Count - from, length - total);
@@ -640,7 +638,7 @@ namespace SuperSocket.Common
                 return copied;
             }
 
-            for (int i = offsetSegmentIndex + 1; i < this.m_Segments.Count; i++)
+            for (var i = offsetSegmentIndex + 1; i < this.m_Segments.Count; i++)
             {
                 var segment = m_Segments[i];
                 thisCopied = Math.Min(segment.Count, length - copied);
@@ -707,7 +705,7 @@ namespace SuperSocket.Common
                 QuickSearchSegment(0, arraySegments.Count - 1, offset, out startSegmentIndex);
             }
 
-            for (int i = startSegmentIndex; i < arraySegments.Count; i++)
+            for (var i = startSegmentIndex; i < arraySegments.Count; i++)
             {
                 var segment = arraySegments[i];
 
@@ -755,7 +753,7 @@ namespace SuperSocket.Common
 
             var index = 0;
 
-            for (int i = from; i < from + shouldDecode; i++)
+            for (var i = from; i < from + shouldDecode; i++)
             {
                 startSegment.Array[i] = (byte)(startSegment.Array[i] ^ mask[index++ % maskLen]);
             }
@@ -765,13 +763,13 @@ namespace SuperSocket.Common
                 return;
             }
 
-            for (int i = startSegmentIndex+1; i < SegmentCount; i++)
+            for (var i = startSegmentIndex + 1; i < SegmentCount; i++)
             {
                 var segment = Segments[i];
 
                 shouldDecode = Math.Min(length - index, segment.Count);
 
-                for (int j = segment.Offset; j < segment.Offset + shouldDecode; j++)
+                for (var j = segment.Offset; j < segment.Offset + shouldDecode; j++)
                 {
                     segment.Array[j] = (byte)(segment.Array[j] ^ mask[index++ % maskLen]);
                 }

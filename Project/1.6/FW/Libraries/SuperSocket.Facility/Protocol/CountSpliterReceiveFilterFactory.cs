@@ -47,7 +47,7 @@ namespace SuperSocket.Facility.Protocol
     /// <summary>
     /// receiveFilterFactory for CountSpliterRequestFilter
     /// </summary>
-    public class CountSpliterReceiveFilterFactory : IReceiveFilterFactory<StringRequestInfo>
+    public class  CountSpliterReceiveFilterFactory : IReceiveFilterFactory<StringRequestInfo>
     {
         private readonly byte m_Spliter;
 

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Configuration;
-using System.Data;
-using System.Threading;
 
 namespace SuperSocket.Common
 {
@@ -180,7 +177,7 @@ namespace SuperSocket.Common
         /// </summary>
         /// <param name="source">The source.</param>
         /// <returns></returns>
-        public static bool ToBOolean(this string source)
+        public static bool ToBoolean(this string source)
         {
             return source.ToBoolean(false);
         }

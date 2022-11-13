@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Reflection;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Globalization;
 
 #if !SILVERLIGHT
 using System.Runtime.Serialization.Formatters.Binary;

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Configuration.Install;
-using System.Net;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
 
 namespace SuperSocket.SocketService
 {

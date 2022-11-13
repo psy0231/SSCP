@@ -5,8 +5,16 @@ using System.Configuration;
 
 namespace SuperSocket.SocketEngine
 {
+    /// <summary>
+    /// Bootstrap Factory
+    /// </summary>
     public static class BootstrapFactory
     {
+        /// <summary>
+        /// Creates the bootstrap.
+        /// </summary>
+        /// <param name="config">The config.</param>
+        /// <returns></returns>
         public static IBootstrap CreateBootstrap(IConfigurationSource config)
         {
             if (config == null)

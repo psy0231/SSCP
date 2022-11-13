@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -195,7 +194,7 @@ namespace SuperSocket.Common
 
             var queue = m_GlobalQueue;
 
-            for (int i = 0; i < items.Count; i++)
+            for (var i = 0; i < items.Count; i++)
             {
                 queue[m_Offset + oldCount + i] = items[i];
             }
@@ -407,7 +406,7 @@ namespace SuperSocket.Common
                 m_TrackID++;
             }
 
-            for (int i = 0; i < m_CurrentCount; i++)
+            for (var i = 0; i < m_CurrentCount; i++)
             {
                 m_GlobalQueue[m_Offset + i] = m_Null;
             }
@@ -437,7 +436,7 @@ namespace SuperSocket.Common
         /// <param name="arrayIndex">Index of the array.</param>
         public void CopyTo(ArraySegment<byte>[] array, int arrayIndex)
         {
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
                 array[arrayIndex + i] = this[i];
             }
@@ -477,7 +476,7 @@ namespace SuperSocket.Common
         /// <exception cref="System.NotSupportedException"></exception>
         public IEnumerator<ArraySegment<byte>> GetEnumerator()
         {
-            for (int i = 0; i < (m_CurrentCount - m_InnerOffset); i++)
+            for (var i = 0; i < (m_CurrentCount - m_InnerOffset); i++)
             {
                 yield return m_GlobalQueue[m_Offset + m_InnerOffset + i];
             }
@@ -490,7 +489,7 @@ namespace SuperSocket.Common
         /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
         /// <exception cref="System.NotSupportedException"></exception>
-        IEnumerator IEnumerable.GetEnumerator()
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
@@ -504,7 +503,7 @@ namespace SuperSocket.Common
             var innerCount = m_CurrentCount - m_InnerOffset;
             var subTotal = 0;
 
-            for (int i = m_InnerOffset; i < innerCount; i++)
+            for (var i = m_InnerOffset; i < innerCount; i++)
             {
                 var segment = m_GlobalQueue[m_Offset + i];
                 subTotal += segment.Count;
@@ -553,7 +552,7 @@ namespace SuperSocket.Common
 
             poolItems = new SendingQueue[size];
 
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
                 poolItems[i] = new SendingQueue(source, i * m_SendingQueueSize, m_SendingQueueSize);
             }

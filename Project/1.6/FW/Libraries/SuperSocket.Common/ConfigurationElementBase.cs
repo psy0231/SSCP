@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Configuration;
-using System.Runtime.Remoting.Messaging;
+using System.Collections.Specialized;
 using System.Xml;
 
 namespace SuperSocket.Common
@@ -136,7 +135,7 @@ namespace SuperSocket.Common
 
             if (options != null && options.Count > 0)
             {
-                for (int i = 0; i < options.Count; i++)
+                for (var i = 0; i < options.Count; i++)
                 {
                     writer.WriteAttributeString(options.GetKey(i), options.Get(i));
                 }
@@ -146,7 +145,7 @@ namespace SuperSocket.Common
 
             if (optionElements != null && optionElements.Count > 0)
             {
-                for (int i = 0; i < optionElements.Count; i++)
+                for (var i = 0; i < optionElements.Count; i++)
                 {
                     writer.WriteRaw(optionElements.Get(i));
                 }
@@ -169,7 +168,7 @@ namespace SuperSocket.Common
         /// true when an unknown element is encountered while deserializing; otherwise, false.
         /// </returns>
         /// <exception cref="T:System.Configuration.ConfigurationErrorsException">The element identified by <paramref name="elementName"/> is locked.- or -One or more of the element's attributes is locked.- or -<paramref name="elementName"/> is unrecognized, or the element has an unrecognized attribute.- or -The element has a Boolean attribute with an invalid value.- or -An attempt was made to deserialize a property more than once.- or -An attempt was made to deserialize a property that is not a valid member of the element.- or -The element cannot contain a CDATA or text element.</exception>
-        protected override bool OnDeserializeUnrecognizedElement(string elementName, XmlReader reader)
+        protected override bool OnDeserializeUnrecognizedElement(string elementName, System.Xml.XmlReader reader)
         {
             if (OptionElements == null)
             {

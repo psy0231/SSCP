@@ -65,6 +65,7 @@ namespace SuperSocket.SocketBase
         }
     }
 
+
     /// <summary>
     /// AppServer basic class
     /// </summary>
@@ -193,6 +194,7 @@ namespace SuperSocket.SocketBase
                     }
                 }
             }
+
             base.OnSessionClosed(session, reason);
         }
 
@@ -276,6 +278,7 @@ namespace SuperSocket.SocketBase
                 }
             }
         }
+
         #endregion
 
         #region Take session snapshot
@@ -365,7 +368,7 @@ namespace SuperSocket.SocketBase
             {
                 var tasks = new Task[sessions.Length];
 
-                for (int i = 0; i < tasks.Length; i++)
+                for (var i = 0; i < tasks.Length; i++)
                 {
                     tasks[i] = Task.Factory.StartNew((s) =>
                     {

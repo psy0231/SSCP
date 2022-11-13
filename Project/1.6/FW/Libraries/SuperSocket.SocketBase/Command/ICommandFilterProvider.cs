@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using SuperSocket.SocketBase.Metadata;
 
 namespace SuperSocket.SocketBase.Command

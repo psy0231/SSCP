@@ -31,6 +31,7 @@ namespace SuperSocket.SocketEngine
         /// </value>
         bool Result { get; }
         
+
         /// <summary>
         /// Gets the app session.
         /// </summary>
@@ -53,10 +54,10 @@ namespace SuperSocket.SocketEngine
 
         private bool m_IsReset;
 
-        
         public AsyncStreamSocketSession(Socket client, SslProtocols security, SocketAsyncEventArgsProxy socketAsyncProxy) 
             : this(client, security, socketAsyncProxy, false)
         {
+
         }
         
         public AsyncStreamSocketSession(Socket client, SslProtocols security, SocketAsyncEventArgsProxy socketAsyncProxy, bool isReset) 
@@ -148,7 +149,7 @@ namespace SuperSocket.SocketEngine
             {
                 if (offsetDelta < 0 || offsetDelta >= Config.ReceiveBufferSize)
                 {
-                    throw new ArgumentException(string.Format("Illigal offsetDelta {0}", offsetDelta), "offsetDelta");
+                    throw new ArgumentException(string.Format("Illigal offsetDelta: {0}", offsetDelta), "offsetDelta");
                 }
 
                 m_Offset = SocketAsyncProxy.OrigOffset + offsetDelta;
@@ -170,11 +171,12 @@ namespace SuperSocket.SocketEngine
         private SslStream CreateSslStream(ICertificateConfig certConfig)
         {
             //Enable client certificate function only if ClientCertificateRequired is true in the configuration
-            if (!certConfig.ClientCertificateRequired)
+            if(!certConfig.ClientCertificateRequired)
             {
                 return new SslStream(new NetworkStream(Client), false);
             }
             
+            //Subscribe the client validation callback
             return new SslStream(new NetworkStream(Client), false, ValidateClientCertificate);
         }
         
@@ -212,21 +214,20 @@ namespace SuperSocket.SocketEngine
                     SslStream sslStream = CreateSslStream(certConfig);
                     result = sslStream.BeginAuthenticateAsServer(AppSession.AppServer.Certificate, certConfig.ClientCertificateRequired, SslProtocols.Default, false, asyncCallback, sslStream);
                     break;
-                case (SslProtocols.Tls12):
+                case (SslProtocols.Ssl2):
                     SslStream ssl2Stream = CreateSslStream(certConfig);
-                    result = ssl2Stream.BeginAuthenticateAsServer(AppSession.AppServer.Certificate, certConfig.ClientCertificateRequired, SslProtocols.Tls12, false, asyncCallback, ssl2Stream);
+                    result = ssl2Stream.BeginAuthenticateAsServer(AppSession.AppServer.Certificate, certConfig.ClientCertificateRequired, SslProtocols.Ssl2, false, asyncCallback, ssl2Stream);
                     break;
                 default:
                     var unknownSslStream = CreateSslStream(certConfig);
                     result = unknownSslStream.BeginAuthenticateAsServer(AppSession.AppServer.Certificate, certConfig.ClientCertificateRequired, secureProtocol, false, asyncCallback, unknownSslStream);
                     break;
-                
             }
 
             return result;
         }
 
-        private void OnBeginInitSeteamOnSessionConnected(IAsyncResult result)
+        private void OnBeginInitStreamOnSessionConnected(IAsyncResult result)
         {
             OnBeginInitStream(result, true);
         }
@@ -248,7 +249,7 @@ namespace SuperSocket.SocketEngine
             {
                 LogError(exc);
 
-                if (!connect) //Session was already registered
+                if (!connect)//Session was already registered
                     this.Close(CloseReason.SocketError);
 
                 OnNegotiateCompleted(false);
@@ -273,7 +274,7 @@ namespace SuperSocket.SocketEngine
         {
             try
             {
-                for (int i = 0; i < queue.Count; i++)
+                for (var i = 0; i < queue.Count; i++)
                 {
                     var item = queue[i];
                     m_Stream.Write(item.Array, item.Offset, item.Count);
@@ -293,7 +294,7 @@ namespace SuperSocket.SocketEngine
         {
             try
             {
-
+                m_Stream.Flush();
             }
             catch (Exception e)
             {
@@ -377,7 +378,7 @@ namespace SuperSocket.SocketEngine
 
             try
             {
-                asyncResult = BeginInitStream(OnBeginInitSeteamOnSessionConnected);
+                asyncResult = BeginInitStream(OnBeginInitStreamOnSessionConnected);
             }
             catch (Exception e)
             {
@@ -388,22 +389,22 @@ namespace SuperSocket.SocketEngine
             
             if (asyncResult == null)
             {
-                OnNegotiateCompleted(false);
+                OnNegotiateCompleted(true);
                 return;
             }
         }
 
         bool INegotiateSocketSession.Result
         {
-            get{ return m_NegotiateResult; }
+            get { return m_NegotiateResult; }
         }
 
         private EventHandler m_NegotiateCompleted;
         
         event EventHandler INegotiateSocketSession.NegotiateCompleted
         {
-            add{ m_NegotiateCompleted += value; }
-            remove{ m_NegotiateCompleted -= value; }
+            add { m_NegotiateCompleted += value; }
+            remove { m_NegotiateCompleted -= value; }
         }
         
         private void OnNegotiateCompleted(bool negotiateResult)

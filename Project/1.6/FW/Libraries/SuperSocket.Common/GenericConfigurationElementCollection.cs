@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Configuration;
+using System.Collections.Generic;
 
 namespace SuperSocket.Common
 {

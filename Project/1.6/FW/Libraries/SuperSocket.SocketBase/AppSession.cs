@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Net;
 using System.Security.Authentication;
 using System.Text;
@@ -8,7 +7,6 @@ using System.Threading;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Protocol;
-using SuperSocket.SocketBase.Security;
 
 namespace SuperSocket.SocketBase
 {
@@ -73,6 +71,7 @@ namespace SuperSocket.SocketBase
             }
         }
 
+
         private bool m_Connected = false;
 
         /// <summary>
@@ -108,6 +107,7 @@ namespace SuperSocket.SocketBase
         /// The current command.
         /// </value>
         public string CurrentCommand { get; set; }
+
 
         /// <summary>
         /// Gets or sets the secure protocol of transportation layer.
@@ -202,7 +202,7 @@ namespace SuperSocket.SocketBase
             }
         }
 
-        private IReceiveFilter<TRequestInfo> m_ReceiveFilter;
+        IReceiveFilter<TRequestInfo> m_ReceiveFilter;
         
         #endregion
 

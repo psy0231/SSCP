@@ -20,7 +20,7 @@ namespace SuperSocket.SocketBase
         /// <value>
         /// The values.
         /// </value>
-        public Dictionary<string, object> Valueses
+        public Dictionary<string, object> Values
         {
             get
             {

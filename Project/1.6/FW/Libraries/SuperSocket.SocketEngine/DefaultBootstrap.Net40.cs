@@ -31,7 +31,8 @@ namespace SuperSocket.SocketEngine
 
             if (m_AppServers.Any(s => config.Name.Equals(s.Name, StringComparison.OrdinalIgnoreCase)))
             {
-                m_GlobalLog.ErrorFormat("The new server's name '{0}' has been taken by another server.", config.Name);
+                m_GlobalLog.ErrorFormat("The new server's name '{0}' has been taken by another server.", config.Name);                
+                return null;
             }
 
             var configSource = new ConfigurationSource(m_Config);

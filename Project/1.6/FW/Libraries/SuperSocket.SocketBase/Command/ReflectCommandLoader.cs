@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security;
 using SuperSocket.Common;
 using SuperSocket.SocketBase.Config;
 

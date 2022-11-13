@@ -63,7 +63,7 @@ namespace SuperSocket.SocketBase
                 {
                     if (logProvider.Logger.IsErrorEnabled)
                     {
-                        for (int i = 0; i < t.Exception.InnerExceptions.Count; i++)
+                        for (var i = 0; i < t.Exception.InnerExceptions.Count; i++)
                         {
                             logProvider.Logger.Error(t.Exception.InnerExceptions[i]);
                         }
@@ -131,7 +131,7 @@ namespace SuperSocket.SocketBase
                 {
                     if (logProvider.Logger.IsErrorEnabled)
                     {
-                        for (int i = 0; i < t.Exception.InnerExceptions.Count; i++)
+                        for (var i = 0; i < t.Exception.InnerExceptions.Count; i++)
                         {
                             logProvider.Logger.Error(t.Exception.InnerExceptions[i]);
                         }

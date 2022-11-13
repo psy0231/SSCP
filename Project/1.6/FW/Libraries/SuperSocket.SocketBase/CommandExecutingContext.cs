@@ -1,6 +1,6 @@
 ﻿using System;
-using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketBase.Protocol;
+using SuperSocket.SocketBase.Command;
 
 namespace SuperSocket.SocketBase
 {
@@ -57,7 +57,7 @@ namespace SuperSocket.SocketBase
         public bool ExceptionHandled
         {
             get;
-            private set;
+            internal set;
         }
 
         /// <summary>

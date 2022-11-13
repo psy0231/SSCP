@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using System.IO;
 
 namespace SuperSocket.Common
 {

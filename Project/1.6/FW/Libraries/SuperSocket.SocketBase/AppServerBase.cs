@@ -290,6 +290,7 @@ namespace SuperSocket.SocketBase
                         {
                             Logger.DebugFormat("The command {0}({1}) has been discovered", castedCommand.Name, castedCommand.ToString());
                         }
+
                         discoveredCommands.Add(c.Name, castedCommand);
                     }
                 }
@@ -342,7 +343,6 @@ namespace SuperSocket.SocketBase
             {
                 OnCommandSetup(workingDict);
             }
-
         }
         
         void CommandLoaderOnError(object sender, ErrorEventArgs e)
@@ -979,7 +979,6 @@ namespace SuperSocket.SocketBase
                 {
                     Logger.Error("There is no certificate configured!");
                 }
-
                 return null;
             }
 
@@ -1423,9 +1422,8 @@ namespace SuperSocket.SocketBase
                                 cancelled = true;
                                 if(Logger.IsInfoEnabled)
                                 {
-                                    Logger.Info(session, string.Format("The excuting of the command {0} was cancelled by the command filter {1}.", command.Name, filter.GetType().ToString()));
+                                    Logger.Info(session, string.Format("The executing of the command {0} was cancelled by the command filter {1}.", command.Name, filter.GetType().ToString()));
                                 }
-
                                 break;
                             }
                         }
@@ -1441,7 +1439,7 @@ namespace SuperSocket.SocketBase
                                 commandContext.Exception = exc;
                             }
 
-                            for (int i = 0; i < commandFilters.Length; i++)
+                            for (var i = 0; i < commandFilters.Length; i++)
                             {
                                 var filter = commandFilters[i];
                                 filter.OnCommandExecuted(commandContext);
@@ -1629,6 +1627,7 @@ namespace SuperSocket.SocketBase
         {
             return true;
         }
+
 
         private SessionHandler<TAppSession> m_NewSessionConnected;
         

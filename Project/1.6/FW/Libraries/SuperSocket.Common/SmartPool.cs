@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Configuration;
 using System.Threading;
 
 namespace SuperSocket.Common
@@ -275,7 +274,7 @@ namespace SuperSocket.Common
             m_ItemsSource[0] = sourceCreator.Create(minPoolSize, out items);
             m_CurrentSourceCount = 1;
 
-            for (int i = 0; i < items.Length; i++)
+            for (var i = 0; i < items.Length; i++)
             {
                 m_GlobalStack.Push(items[i]);
             }
@@ -367,7 +366,7 @@ namespace SuperSocket.Common
 
             m_TotalItemsCount += newItemsCount;
 
-            for (int i = 0; i < items.Length; i++)
+            for (var i = 0; i < items.Length; i++)
             {
                 m_GlobalStack.Push(items[i]);
             }

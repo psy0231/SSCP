@@ -22,7 +22,6 @@ namespace SuperSocket.SocketBase.Command
         /// <param name="requestInfo">The request info.</param>
         public abstract void ExecuteCommand(TAppSession session, TRequestInfo requestInfo);
 
-
         #endregion
 
         #region ICommand Members
